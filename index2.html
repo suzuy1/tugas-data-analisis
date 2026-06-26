@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pemerataan Nakes – Provinsi Aceh</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* CSS transition untuk reveal dashboard — tidak butuh setTimeout hack */
+        #dashboardContent {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #dashboardContent.is-hidden {
+            opacity: 0;
+            transform: translateY(1rem);
+            pointer-events: none;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased selection:bg-teal-500/30 selection:text-teal-200">
+
+    <header class="border-b border-slate-800 bg-slate-950/60 backdrop-blur sticky top-0 z-50" role="banner">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse mr-1.5"></span>
+                    Kesehatan · Engine Data-Driven v2.1
+                </span>
+                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight mt-1.5">Pemerataan Tenaga Kesehatan Dasar Provinsi Aceh</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Analisis Komprehensif Integrasi Dataset Sektoral Faskes & Nakes Puskesmas</p>
+            </div>
+            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-left md:text-right text-xs text-slate-300 w-full md:w-auto shadow-xl">
+                <p class="font-bold text-teal-400">Kelompok Analisis Data Terbuka</p>
+                <p class="mt-1 font-medium">Nama 1 · Nama 2 · Nama 3 · Nama 4 · Nama 5</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-8" role="main">
+
+        <!-- Upload Zone -->
+        <section aria-label="Unggah Berkas Data">
+            <div id="dropZone" class="bg-slate-950 border-2 border-dashed border-slate-800 hover:border-teal-500/80 rounded-2xl p-8 text-center transition-all duration-300 group cursor-pointer shadow-2xl">
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden" aria-label="Pilih berkas CSV">
+
+                <div id="uploadPrompt" class="max-w-md mx-auto space-y-4">
+                    <div class="mx-auto w-14 h-14 bg-slate-900 border border-slate-800 group-hover:border-teal-500/30 group-hover:bg-teal-500/5 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-teal-400 transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-sm font-bold text-white group-hover:text-teal-300 transition-colors">Seret & Lepas Berkas Hasil SQL</h3>
+                        <p class="text-xs text-slate-400">Atau klik untuk memilih file <span class="text-teal-400 font-mono font-medium">.csv</span></p>
+                    </div>
+                    <div class="text-[10px] text-slate-500 bg-slate-900/60 inline-block px-3 py-1 rounded-md border border-slate-800/80">
+                        Validasi Otomatis: Skema Header Ekspor Supabase
+                    </div>
+                </div>
+
+                <div id="uploadLoading" class="hidden max-w-xs mx-auto space-y-4 py-4">
+                    <div class="w-12 h-12 mx-auto rounded-full border-4 border-slate-800 border-t-teal-500 animate-spin"></div>
+                    <div class="space-y-1.5">
+                        <p class="text-xs font-semibold text-teal-400 uppercase tracking-wider animate-pulse">Memproses Data...</p>
+                        <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                            <div id="progressBar" class="bg-teal-500 h-full w-0 transition-all duration-300 ease-out"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error display — kosong saat tidak ada error, diisi oleh ErrorHandler -->
+            <div id="errorMessage" class="hidden mt-3 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl" role="alert" aria-live="polite"></div>
+        </section>
+
+        <!-- Dashboard — hidden + is-hidden class dikelola CSS transition, bukan setTimeout -->
+        <div id="dashboardContent" class="hidden is-hidden space-y-8">
+
+            <!-- KPI Cards -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" aria-label="Indikator Kinerja Utama">
+                <div class="bg-slate-950 border border-slate-800/80 rounded-2xl p-5 shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cakupan Wilayah</p>
+                    <p id="kpiWilayah" class="text-3xl font-extrabold text-white mt-2.5 tracking-tight">–</p>
+                    <p class="text-xs text-slate-500 mt-1">Kabupaten / Kota ter-parsing</p>
+                </div>
+                <div class="bg-slate-950 border border-slate-800/80 border-l-4 border-l-rose-500 rounded-2xl p-5 shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi Kritis</p>
+                    <p id="kpiRasioRendah" class="text-3xl font-extrabold text-rose-400 mt-2.5 tracking-tight">–</p>
+                    <p id="kpiNamaRendah" class="text-xs text-slate-500 mt-1 font-medium truncate">–</p>
+                </div>
+                <div class="bg-slate-950 border border-slate-800/80 border-l-4 border-l-emerald-500 rounded-2xl p-5 shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi Padat</p>
+                    <p id="kpiRasioTinggi" class="text-3xl font-extrabold text-emerald-400 mt-2.5 tracking-tight">–</p>
+                    <p id="kpiNamaTinggi" class="text-xs text-slate-500 mt-1 font-medium truncate">–</p>
+                </div>
+                <div class="bg-slate-950 border border-slate-800/80 border-l-4 border-l-teal-500 rounded-2xl p-5 shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Agregat Nakes</p>
+                    <p id="kpiTotalNakes" class="text-3xl font-extrabold text-teal-400 mt-2.5 tracking-tight">–</p>
+                    <p class="text-xs text-slate-500 mt-1">Jiwa terintegrasi di Puskesmas</p>
+                </div>
+            </section>
+
+            <!-- Chart + Detail Panel -->
+            <section class="space-y-6">
+
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-900 pb-4 mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                                Matriks Disparitas Kepadatan Tenaga Medis
+                            </h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Rasio nakes per unit Puskesmas per kabupaten/kota</p>
+                        </div>
+                        <button id="btnExportChart" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-500">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Ekspor (.png)
+                        </button>
+                    </div>
+                    <div class="relative h-96 w-full">
+                        <canvas id="rasioChart" aria-label="Grafik disparitas rasio nakes per puskesmas" role="img"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl">
+                    <div class="border-b border-slate-900 pb-3 mb-5">
+                        <h2 class="text-base font-bold text-white">Profil Granular Wilayah</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Pilih daerah untuk melihat detail komponennya</p>
+                    </div>
+
+                    <div class="space-y-2 mb-5">
+                        <label for="searchWilayah" class="text-xs font-semibold text-slate-400">Cari Wilayah</label>
+                        <div class="relative">
+                            <input type="text" id="searchWilayah" placeholder="Ketik nama kabupaten/kota..."
+                                class="w-full bg-slate-900 border border-slate-800 focus:border-teal-500/80 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition duration-200">
+                            <svg class="absolute left-3 top-2.5 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                        <select id="wilayahSelect" class="w-full bg-slate-900 border border-slate-800 focus:border-teal-500/80 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none transition duration-200 cursor-pointer" aria-label="Pilih kabupaten/kota"></select>
+                    </div>
+
+                    <div class="space-y-4 flex-1">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-800/40">
+                                <span class="text-[11px] font-medium text-slate-400 block">Kapasitas Faskes</span>
+                                <span id="detailPuskesmas" class="text-base font-bold text-white mt-0.5 block">–</span>
+                            </div>
+                            <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-800/40">
+                                <span class="text-[11px] font-medium text-slate-400 block">Total Nakes</span>
+                                <span id="detailTotalNakes" class="text-base font-bold text-teal-400 mt-0.5 block">–</span>
+                            </div>
+                        </div>
+
+                        <!-- Badge status wilayah berdasarkan CONFIG.THRESHOLD — bukan hardcode -->
+                        <div class="bg-gradient-to-r from-slate-900 to-slate-950 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-slate-400">Rasio Kepadatan Alokasi</span>
+                                <span id="detailStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full border">–</span>
+                            </div>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="detailRasio" class="text-3xl font-black text-white tracking-tight">–</span>
+                                <span class="text-xs text-slate-400 font-medium">Nakes / Puskesmas</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-1">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Komposisi Profesi</h3>
+                            <div class="space-y-2.5" id="profesiBreakdown">
+                                <!-- diisi oleh DetailRenderer -->
+                            </div>
+                        </div>
+
+                        <!-- Visual Chart: Doughnut Komposisi Profesi -->
+                        <div class="space-y-3 pt-3 border-t border-slate-900">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Visual Komposisi</h3>
+                            <div class="relative h-48 w-full">
+                                <canvas id="profesiDoughnutChart" aria-label="Grafik doughnut komposisi profesi"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Visual Chart: Radar Profil Wilayah vs Rata-rata Provinsi -->
+                        <div class="space-y-3 pt-3 border-t border-slate-900">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Profil vs Rata-rata Provinsi</h3>
+                            <div class="relative h-56 w-full">
+                                <canvas id="wilayahRadarChart" aria-label="Grafik radar perbandingan wilayah dengan rata-rata provinsi"></canvas>
+                            </div>
+                            <div class="flex items-center justify-center gap-4 text-[10px]">
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-teal-500/60 border border-teal-400"></span> Wilayah Terpilih</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600/40 border border-slate-500"></span> Rata-rata Provinsi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-[10px] text-slate-500 text-center mt-6 border-t border-slate-900 pt-3">
+                        Klik batang grafik atau pilih dari dropdown untuk eksplorasi wilayah.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Insight Cards -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex items-center gap-3 text-rose-400 border-b border-slate-900 pb-3">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 1: Kesenjangan & Alokasi Kritis</h3>
+                    </div>
+                    <p id="insightDisparitas" class="text-sm text-slate-400 mt-3.5 leading-relaxed">Menunggu data...</p>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex items-center gap-3 text-purple-400 border-b border-slate-900 pb-3">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 2: Dominasi Kluster Profesi</h3>
+                    </div>
+                    <p id="insightDominasi" class="text-sm text-slate-400 mt-3.5 leading-relaxed">Menunggu data...</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-xs text-slate-600 border-t border-slate-800/60 mt-12 bg-slate-950/20" role="contentinfo">
+        <p>© 2026 Dashboard Terbuka Provinsi Aceh · Portofolio Frontend Modern</p>
+    </footer>
+
+    <script>
+    'use strict';
+
+    // =============================================================================
+    // KONFIGURASI GLOBAL
+    // Semua nilai yang dipakai lebih dari satu tempat tinggal di sini.
+    // Tidak ada magic number tersebar di codebase.
+    // =============================================================================
+    const CONFIG = Object.freeze({
+        THRESHOLD: {
+            CRITICAL_LOW: 30,   // rasio di bawah ini = kritis
+            SATURATED_HIGH: 100 // rasio di atas ini = padat
+        },
+        COLOR: {
+            CRITICAL:  { bar: 'rgba(244,63,94,0.8)',   border: '#f43f5e' },
+            OPTIMAL:   { bar: 'rgba(20,184,166,0.8)',  border: '#14b8a6' },
+        },
+        REQUIRED_HEADERS: [
+            'kabupaten_kota', 'jumlah_puskesmas_2024', 'total_seluruh_nakes',
+            'rasio_nakes_per_puskesmas', 'jumlah_perawat', 'jumlah_bidan',
+            'jumlah_kesmas', 'jumlah_kesling', 'jumlah_gizi'
+        ],
+        PROFESI: [
+            { key: 'perawat', label: 'Perawat Klinis',         color: 'bg-blue-500',   glow: 'rgba(59,130,246,0.5)'  },
+            { key: 'bidan',   label: 'Bidan Kebidanan',        color: 'bg-purple-500', glow: 'rgba(168,85,247,0.5)'  },
+            { key: 'kesmas',  label: 'Kesehatan Masyarakat',   color: 'bg-amber-500',  glow: 'rgba(245,158,11,0.5)'  },
+            { key: 'lainnya', label: 'Kesling & Gizi',         color: 'bg-emerald-500',glow: 'rgba(16,185,129,0.5)'  },
+        ]
+    });
+
+    // =============================================================================
+    // STATE
+    // Satu sumber kebenaran. Tidak ada variabel global tersebar.
+    // =============================================================================
+    const State = {
+        records: [],         // array record yang sudah diparsing dan di-sort
+        activeIndex: 0,      // index wilayah yang sedang ditampilkan di detail panel
+    };
+
+    // =============================================================================
+    // DOM REGISTRY
+    // getElementById dipanggil sekali, hasilnya disimpan.
+    // Fungsi ini dipanggil saat DOMContentLoaded.
+    // =============================================================================
+    let DOM = {};
+    function buildDOMRegistry() {
+        DOM = {
+            dropZone:        document.getElementById('dropZone'),
+            fileInput:       document.getElementById('csvFileInput'),
+            uploadPrompt:    document.getElementById('uploadPrompt'),
+            uploadLoading:   document.getElementById('uploadLoading'),
+            progressBar:     document.getElementById('progressBar'),
+            errorMessage:    document.getElementById('errorMessage'),
+            dashboardContent:document.getElementById('dashboardContent'),
+            // KPI
+            kpiWilayah:      document.getElementById('kpiWilayah'),
+            kpiRasioRendah:  document.getElementById('kpiRasioRendah'),
+            kpiNamaRendah:   document.getElementById('kpiNamaRendah'),
+            kpiRasioTinggi:  document.getElementById('kpiRasioTinggi'),
+            kpiNamaTinggi:   document.getElementById('kpiNamaTinggi'),
+            kpiTotalNakes:   document.getElementById('kpiTotalNakes'),
+            // Detail panel
+            wilayahSelect:   document.getElementById('wilayahSelect'),
+            searchWilayah:   document.getElementById('searchWilayah'),
+            detailPuskesmas: document.getElementById('detailPuskesmas'),
+            detailTotalNakes:document.getElementById('detailTotalNakes'),
+            detailRasio:     document.getElementById('detailRasio'),
+            detailStatusBadge: document.getElementById('detailStatusBadge'),
+            profesiBreakdown:document.getElementById('profesiBreakdown'),
+            // Visual Charts (Detail Panel)
+            profesiDoughnutChart: document.getElementById('profesiDoughnutChart'),
+            wilayahRadarChart:    document.getElementById('wilayahRadarChart'),
+            // Insight
+            insightDisparitas: document.getElementById('insightDisparitas'),
+            insightDominasi:   document.getElementById('insightDominasi'),
+            // Actions
+            btnExportChart:  document.getElementById('btnExportChart'),
+        };
+    }
+
+    // =============================================================================
+    // ERROR HANDLER
+    // Tanggung jawab tunggal: tampilkan/sembunyikan pesan error ke user.
+    // Dipisah dari DataPipeline karena pipeline tidak boleh tahu soal DOM.
+    // =============================================================================
+    const ErrorHandler = {
+        show(message) {
+            DOM.uploadLoading.classList.add('hidden');
+            DOM.uploadPrompt.classList.remove('hidden');
+            DOM.errorMessage.textContent = `⚠️ ${message}`;
+            DOM.errorMessage.classList.remove('hidden');
+        },
+        clear() {
+            DOM.errorMessage.classList.add('hidden');
+            DOM.errorMessage.textContent = '';
+        }
+    };
+
+    // =============================================================================
+    // DATA PIPELINE
+    // Tanggung jawab: validasi + parsing CSV → State.records.
+    // Tidak tahu apapun tentang DOM selain loading indicator (lewat callback).
+    // =============================================================================
+    const DataPipeline = {
+        validateHeaders(fields) {
+            return CONFIG.REQUIRED_HEADERS.every(h => fields.includes(h));
+        },
+
+        mapRow(row) {
+            return {
+                nama:     row['kabupaten_kota'],
+                puskesmas: parseInt(row['jumlah_puskesmas_2024']) || 0,
+                total:     parseInt(row['total_seluruh_nakes'])   || 0,
+                rasio:     parseFloat(row['rasio_nakes_per_puskesmas']) || 0,
+                perawat:   parseInt(row['jumlah_perawat']) || 0,
+                bidan:     parseInt(row['jumlah_bidan'])   || 0,
+                kesmas:    parseInt(row['jumlah_kesmas'])  || 0,
+                lainnya:  (parseInt(row['jumlah_kesling']) || 0) + (parseInt(row['jumlah_gizi']) || 0),
+            };
+        },
+
+        processFile(file) {
+            ErrorHandler.clear();
+            DOM.uploadPrompt.classList.add('hidden');
+            DOM.uploadLoading.classList.remove('hidden');
+            DOM.progressBar.style.width = '30%';
+
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    DOM.progressBar.style.width = '70%';
+
+                    if (!this.validateHeaders(results.meta.fields)) {
+                        ErrorHandler.show('Skema CSV tidak valid. Pastikan kolom sesuai struktur ekspor Supabase.');
+                        return;
+                    }
+
+                    // Parse → map → sort ascending by rasio
+                    State.records = results.data
+                        .map(row => this.mapRow(row))
+                        .sort((a, b) => a.rasio - b.rasio);
+
+                    DOM.progressBar.style.width = '100%';
+
+                    // Tunggu animasi progress selesai, lalu boot dashboard
+                    setTimeout(() => {
+                        DOM.uploadLoading.classList.add('hidden');
+                        DOM.uploadPrompt.classList.remove('hidden');
+                        Dashboard.boot();
+                    }, 400);
+                },
+                error: () => {
+                    ErrorHandler.show('Gagal membaca berkas. Pastikan file tidak rusak.');
+                }
+            });
+        }
+    };
+
+    // =============================================================================
+    // CHART MANAGER
+    // Tanggung jawab: render dan destroy Chart.js instance.
+    //
+    // FIX: resize listener dihapus total.
+    //   Chart.js sudah handle resize sendiri lewat `responsive: true`.
+    //   Re-render manual justru lebih lambat dan buang memory.
+    // =============================================================================
+    const ChartManager = {
+        instance: null,
+
+        render(records) {
+            const canvas = document.getElementById('rasioChart');
+            const ctx = canvas.getContext('2d');
+
+            // Destroy dulu kalau ada instance lama sebelum buat yang baru
+            if (this.instance) {
+                this.instance.destroy();
+                this.instance = null;
+            }
+
+            const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
+            const dataRasio = records.map(r => r.rasio);
+
+            // Gradient per bar berdasarkan threshold di CONFIG — tidak ada magic number
+            const gradOptimal  = ctx.createLinearGradient(0, 0, 0, 350);
+            gradOptimal.addColorStop(0, 'rgba(20,184,166,0.85)');
+            gradOptimal.addColorStop(1, 'rgba(13,148,136,0.1)');
+
+            const gradCritical = ctx.createLinearGradient(0, 0, 0, 350);
+            gradCritical.addColorStop(0, 'rgba(244,63,94,0.85)');
+            gradCritical.addColorStop(1, 'rgba(225,29,72,0.1)');
+
+            const bgColors     = records.map(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW ? gradCritical : gradOptimal);
+            const borderColors = records.map(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW ? CONFIG.COLOR.CRITICAL.border : CONFIG.COLOR.OPTIMAL.border);
+
+            const isMobile = window.innerWidth < 640;
+
+            this.instance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: dataRasio,
+                        backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        hoverBackgroundColor: borderColors,
+                        hoverBorderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: isMobile ? 'y' : 'x',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            padding: 12,
+                            backgroundColor: '#020617',
+                            titleFont: { size: 12, weight: 'bold', family: 'Plus Jakarta Sans' },
+                            bodyFont:  { size: 12, family: 'Plus Jakarta Sans' },
+                            borderColor: '#1e293b',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: ctx => ` Rasio: ${ctx.parsed.x ?? ctx.parsed.y} Nakes / Puskesmas`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } } }
+                    },
+                    onClick: (_event, activeElements) => {
+                        if (activeElements.length > 0) {
+                            DetailRenderer.render(activeElements[0].index);
+                        }
+                    }
+                }
+            });
+        },
+
+        exportPNG() {
+            if (!this.instance) return;
+            const link = document.createElement('a');
+            link.download = 'matriks-disparitas-nakes-aceh.png';
+            link.href = this.instance.toBase64Image();
+            link.click();
+        }
+    };
+
+    // =============================================================================
+    // DOUGHNUT CHART MANAGER — Komposisi Profesi per Wilayah
+    // Tanggung jawab: render doughnut chart komposisi 4 profesi di detail panel.
+    // =============================================================================
+    const ProfesiDoughnutManager = {
+        instance: null,
+
+        render(record) {
+            const canvas = DOM.profesiDoughnutChart;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            if (this.instance) {
+                this.instance.destroy();
+                this.instance = null;
+            }
+
+            const data = [
+                record.perawat,
+                record.bidan,
+                record.kesmas,
+                record.lainnya
+            ];
+
+            const colors = [
+                'rgba(59,130,246,0.85)',   // blue (perawat)
+                'rgba(168,85,247,0.85)',   // purple (bidan)
+                'rgba(245,158,11,0.85)',   // amber (kesmas)
+                'rgba(16,185,129,0.85)',   // emerald (lainnya)
+            ];
+            const borders = [
+                'rgba(59,130,246,1)',
+                'rgba(168,85,247,1)',
+                'rgba(245,158,11,1)',
+                'rgba(16,185,129,1)',
+            ];
+            const labels = ['Perawat', 'Bidan', 'Kesmas', 'Kesling & Gizi'];
+
+            this.instance = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: colors,
+                        borderColor: borders,
+                        borderWidth: 2,
+                        hoverOffset: 8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { family: 'Plus Jakarta Sans', size: 10 },
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                            }
+                        },
+                        tooltip: {
+                            padding: 10,
+                            backgroundColor: '#020617',
+                            titleFont: { size: 11, weight: 'bold', family: 'Plus Jakarta Sans' },
+                            bodyFont: { size: 11, family: 'Plus Jakarta Sans' },
+                            borderColor: '#1e293b',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (ctx) => {
+                                    const val = ctx.parsed;
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                    return ` ${ctx.label}: ${val.toLocaleString('id-ID')} Org (${pct}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 600,
+                    }
+                }
+            });
+        }
+    };
+
+    // =============================================================================
+    // RADAR CHART MANAGER — Profil Wilayah vs Rata-rata Provinsi
+    // Tanggung jawab: render radar chart membandingkan 5 dimensi wilayah terpilih
+    // dengan rata-rata provinsi.
+    // =============================================================================
+    const WilayahRadarManager = {
+        instance: null,
+
+        render(record, allRecords) {
+            const canvas = DOM.wilayahRadarChart;
+            if (!canvas || !allRecords || allRecords.length === 0) return;
+            const ctx = canvas.getContext('2d');
+
+            if (this.instance) {
+                this.instance.destroy();
+                this.instance = null;
+            }
+
+            // Hitung rata-rata provinsi untuk 5 dimensi (normalisasi ke skala 0-100)
+            const avg = {
+                perawat: allRecords.reduce((s, r) => s + r.perawat, 0) / allRecords.length,
+                bidan:   allRecords.reduce((s, r) => s + r.bidan, 0) / allRecords.length,
+                kesmas:  allRecords.reduce((s, r) => s + r.kesmas, 0) / allRecords.length,
+                lainnya: allRecords.reduce((s, r) => s + r.lainnya, 0) / allRecords.length,
+                rasio:   allRecords.reduce((s, r) => s + r.rasio, 0) / allRecords.length,
+            };
+
+            // Normalisasi: nilai wilayah dibanding rata-rata (skala relatif)
+            // Gunakan log scale untuk menghindari outlier terlalu dominan
+            const normalize = (val, avgVal) => {
+                if (avgVal === 0) return 50;
+                const ratio = val / avgVal;
+                // Clamp antara 0-100 dengan midpoint 50 = rata-rata
+                return Math.min(100, Math.max(0, 50 + (ratio - 1) * 50));
+            };
+
+            const dataWilayah = [
+                normalize(record.perawat, avg.perawat),
+                normalize(record.bidan, avg.bidan),
+                normalize(record.kesmas, avg.kesmas),
+                normalize(record.lainnya, avg.lainnya),
+                normalize(record.rasio, avg.rasio),
+            ];
+            const dataAvg = [50, 50, 50, 50, 50]; // rata-rata = 50 (baseline)
+
+            this.instance = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: ['Perawat', 'Bidan', 'Kesmas', 'Kesling & Gizi', 'Rasio Nakes'],
+                    datasets: [
+                        {
+                            label: record.nama,
+                            data: dataWilayah,
+                            backgroundColor: 'rgba(20,184,166,0.15)',
+                            borderColor: '#14b8a6',
+                            pointBackgroundColor: '#14b8a6',
+                            pointBorderColor: '#0f172a',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#14b8a6',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                        },
+                        {
+                            label: 'Rata-rata Provinsi',
+                            data: dataAvg,
+                            backgroundColor: 'rgba(100,116,139,0.08)',
+                            borderColor: 'rgba(100,116,139,0.5)',
+                            pointBackgroundColor: 'rgba(100,116,139,0.5)',
+                            pointBorderColor: '#0f172a',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(100,116,139,0.8)',
+                            borderWidth: 1.5,
+                            borderDash: [5, 5],
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            padding: 10,
+                            backgroundColor: '#020617',
+                            titleFont: { size: 11, weight: 'bold', family: 'Plus Jakarta Sans' },
+                            bodyFont: { size: 11, family: 'Plus Jakarta Sans' },
+                            borderColor: '#1e293b',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: (ctx) => {
+                                    const label = ctx.dataset.label;
+                                    const val = ctx.raw;
+                                    const idx = ctx.dataIndex;
+                                    const keys = ['perawat', 'bidan', 'kesmas', 'lainnya', 'rasio'];
+                                    const key = keys[idx];
+                                    if (label === 'Rata-rata Provinsi') {
+                                        const avgVal = avg[key];
+                                        return ` Rata-rata: ${avgVal.toFixed(1)}`;
+                                    }
+                                    const rawVal = record[key];
+                                    return ` ${label}: ${rawVal.toLocaleString('id-ID')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                display: false,
+                                stepSize: 25,
+                            },
+                            grid: {
+                                color: 'rgba(30,41,59,0.6)',
+                            },
+                            angleLines: {
+                                color: 'rgba(30,41,59,0.4)',
+                            },
+                            pointLabels: {
+                                color: '#94a3b8',
+                                font: { family: 'Plus Jakarta Sans', size: 10, weight: '500' },
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 700,
+                        easing: 'easeOutQuart',
+                    }
+                }
+            });
+        }
+    };
+
+    // =============================================================================
+    // DROPDOWN MANAGER
+    // Tanggung jawab: populate dan filter dropdown wilayah.
+    //
+    // FIX dari versi lama:
+    //   Filter sekarang benar-benar memfilter State.records (array),
+    //   lalu rebuild <option> dari hasil filter — bukan sekadar sembunyikan DOM.
+    //   Ini mencegah bug di mana index select bisa tidak sinkron dengan data.
+    // =============================================================================
+    const DropdownManager = {
+        populate(records) {
+            DOM.wilayahSelect.innerHTML = '';
+            records.forEach((row, i) => {
+                const opt = document.createElement('option');
+                // value = index di State.records, bukan index hasil filter
+                opt.value = State.records.indexOf(row);
+                opt.textContent = row.nama;
+                DOM.wilayahSelect.appendChild(opt);
+            });
+        },
+
+        filter(keyword) {
+            const term = keyword.toLowerCase().trim();
+            // Filter dari array sumber, bukan manipulasi DOM visibility
+            const filtered = term
+                ? State.records.filter(r => r.nama.toLowerCase().includes(term))
+                : State.records;
+            this.populate(filtered);
+
+            // Otomatis tampilkan detail wilayah pertama hasil filter
+            if (filtered.length > 0) {
+                const firstIndex = State.records.indexOf(filtered[0]);
+                DetailRenderer.render(firstIndex);
+            }
+        }
+    };
+
+    // =============================================================================
+    // DETAIL RENDERER
+    // Tanggung jawab: render detail panel kanan berdasarkan index record.
+    //
+    // FIX dari versi lama:
+    //   - Status badge sekarang menggunakan CONFIG.THRESHOLD, bukan hardcode
+    //   - Bar profesi di-generate dari CONFIG.PROFESI, tidak hardcode per profesi
+    //   - Menambahkan pemanggilan ProfesiDoughnutManager dan WilayahRadarManager
+    // =============================================================================
+    const DetailRenderer = {
+        getStatus(rasio) {
+            if (rasio < CONFIG.THRESHOLD.CRITICAL_LOW) {
+                return { label: 'Kritis', cls: 'text-rose-400 bg-rose-500/10 border-rose-500/30' };
+            }
+            if (rasio >= CONFIG.THRESHOLD.SATURATED_HIGH) {
+                return { label: 'Padat', cls: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' };
+            }
+            return { label: 'Sedang', cls: 'text-amber-400 bg-amber-500/10 border-amber-500/30' };
+        },
+
+        render(index) {
+            State.activeIndex = index;
+            const record = State.records[index];
+            if (!record) return;
+
+            // Sinkronisasi dropdown ke index yang aktif
+            DOM.wilayahSelect.value = index;
+
+            // Bagian atas
+            DOM.detailPuskesmas.textContent  = `${record.puskesmas} Unit`;
+            DOM.detailTotalNakes.textContent = `${record.total.toLocaleString('id-ID')} Jiwa`;
+            DOM.detailRasio.textContent      = record.rasio;
+
+            // Badge status berdasarkan threshold CONFIG — bukan hardcode warna
+            const status = this.getStatus(record.rasio);
+            DOM.detailStatusBadge.textContent  = status.label;
+            DOM.detailStatusBadge.className    = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${status.cls}`;
+
+            // Bar profesi di-generate dari CONFIG.PROFESI
+            // Tidak ada pengulangan kode per-profesi
+            const total = record.total || 1; // cegah pembagian nol
+            DOM.profesiBreakdown.innerHTML = CONFIG.PROFESI.map(p => {
+                const count = record[p.key];
+                const pct   = ((count / total) * 100).toFixed(1);
+                return `
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400 font-medium">${p.label}</span>
+                            <span class="font-bold text-white">${count.toLocaleString('id-ID')} Org</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                            <div class="${p.color} h-full transition-all duration-500 ease-out"
+                                 style="width: ${pct}%; box-shadow: 0 0 8px ${p.glow}"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render visual charts
+            ProfesiDoughnutManager.render(record);
+            WilayahRadarManager.render(record, State.records);
+        }
+    };
+
+    // =============================================================================
+    // INSIGHT ENGINE
+    // Tanggung jawab: generate teks insight berbasis data riil + CONFIG.THRESHOLD.
+    //
+    // FIX dari versi lama:
+    //   CONFIG.THRESHOLD sekarang benar-benar dipakai untuk narasi,
+    //   bukan hanya didefinisikan tapi tidak digunakan.
+    // =============================================================================
+    const InsightEngine = {
+        generate(records) {
+            const lowest  = records[0];
+            const highest = records[records.length - 1];
+            const gapPct  = (((highest.rasio - lowest.rasio) / lowest.rasio) * 100).toFixed(0);
+
+            const criticalCount = records.filter(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW).length;
+            const saturatedCount = records.filter(r => r.rasio >= CONFIG.THRESHOLD.SATURATED_HIGH).length;
+
+            DOM.insightDisparitas.innerHTML = `
+                Data mendeteksi <span class="text-rose-400 font-bold">ketimpangan alokasi ekstrem</span> antar wilayah faskes dasar Provinsi Aceh.
+                Rasio tertinggi ada di <span class="text-white font-semibold">${highest.nama}</span>
+                sebesar <span class="text-emerald-400 font-bold">${highest.rasio} nakes/Puskesmas</span>,
+                berbanding terbalik dengan <span class="text-white font-semibold">${lowest.nama}</span>
+                yang hanya <span class="text-rose-400 font-bold">${lowest.rasio} nakes/unit</span>.
+                Kesenjangan antar keduanya mencapai <span class="text-rose-400 font-bold">${gapPct}%</span>.
+                Terdapat <strong class="text-rose-400">${criticalCount} wilayah kritis</strong>
+                (rasio &lt; ${CONFIG.THRESHOLD.CRITICAL_LOW}) dan
+                <strong class="text-emerald-400">${saturatedCount} wilayah padat</strong>
+                (rasio ≥ ${CONFIG.THRESHOLD.SATURATED_HIGH}).
+            `;
+
+            // Hitung total per profesi untuk cari dominan
+            const totals = CONFIG.PROFESI.map(p => ({
+                label: p.label,
+                color: p.color.replace('bg-', 'text-'),
+                total: records.reduce((sum, r) => sum + r[p.key], 0)
+            })).sort((a, b) => b.total - a.total);
+
+            const dominan  = totals[0];
+            const runnerup = totals[1];
+
+            DOM.insightDominasi.innerHTML = `
+                Secara makro, struktur faskes dasar Aceh didominasi profesi
+                <span class="${dominan.color} font-bold">${dominan.label}</span>
+                dengan kontribusi kumulatif <span class="text-white font-semibold">${dominan.total.toLocaleString('id-ID')} jiwa</span>,
+                disusul <span class="${runnerup.color} font-bold">${runnerup.label}</span>
+                sebesar <span class="text-white font-semibold">${runnerup.total.toLocaleString('id-ID')} jiwa</span>.
+                Rekomendasi: tahan penumpukan lebih lanjut pada profesi dominan dan prioritaskan
+                pemenuhan kuota profesi penunjang klinis yang masih defisit untuk integrasi layanan yang merata.
+            `;
+        }
+    };
+
+    // =============================================================================
+    // KPI RENDERER
+    // Tanggung jawab: isi empat kartu KPI di atas dashboard.
+    // =============================================================================
+    const KPIRenderer = {
+        render(records) {
+            const lowest  = records[0];
+            const highest = records[records.length - 1];
+            const total   = records.reduce((sum, r) => sum + r.total, 0);
+
+            DOM.kpiWilayah.textContent      = records.length;
+            DOM.kpiRasioRendah.textContent  = lowest.rasio;
+            DOM.kpiNamaRendah.textContent   = lowest.nama;
+            DOM.kpiRasioTinggi.textContent  = highest.rasio;
+            DOM.kpiNamaTinggi.textContent   = highest.nama;
+            DOM.kpiTotalNakes.textContent   = total.toLocaleString('id-ID');
+        }
+    };
+
+    // =============================================================================
+    // DASHBOARD ORCHESTRATOR
+    // Tanggung jawab: koordinasi boot sequence setelah data siap.
+    // Tidak mengandung logika bisnis — hanya memanggil modul lain dalam urutan benar.
+    //
+    // FIX: Reveal pakai requestAnimationFrame, bukan setTimeout(fn, 50) hack.
+    // =============================================================================
+    const Dashboard = {
+        boot() {
+            const { records } = State;
+
+            KPIRenderer.render(records);
+            DropdownManager.populate(records);
+            ChartManager.render(records);
+            DetailRenderer.render(0);
+            InsightEngine.generate(records);
+
+            // Reveal dashboard via CSS class + rAF — no setTimeout hack
+            DOM.dashboardContent.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    DOM.dashboardContent.classList.remove('is-hidden');
+                });
+            });
+        }
+    };
+
+    // =============================================================================
+    // EVENT BINDINGS
+    // Semua listener ada di satu tempat. Mudah di-audit.
+    // =============================================================================
+    function bindEvents() {
+        // Upload via klik zone
+        DOM.dropZone.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target === DOM.fileInput) return;
+            DOM.fileInput.click();
+        });
+
+        DOM.fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) DataPipeline.processFile(e.target.files[0]);
+        });
+
+        // Drag & Drop
+        DOM.dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            DOM.dropZone.classList.add('border-teal-500', 'bg-teal-500/5');
+        });
+
+        DOM.dropZone.addEventListener('dragleave', () => {
+            DOM.dropZone.classList.remove('border-teal-500', 'bg-teal-500/5');
+        });
+
+        DOM.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            DOM.dropZone.classList.remove('border-teal-500', 'bg-teal-500/5');
+            const file = e.dataTransfer.files[0];
+            if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
+                DataPipeline.processFile(file);
+            } else {
+                ErrorHandler.show('Hanya file .csv yang diterima.');
+            }
+        });
+
+        // Detail panel: dropdown selection
+        DOM.wilayahSelect.addEventListener('change', (e) => {
+            DetailRenderer.render(parseInt(e.target.value, 10));
+        });
+
+        // Detail panel: search/filter — filter array, bukan sembunyikan DOM
+        DOM.searchWilayah.addEventListener('input', (e) => {
+            DropdownManager.filter(e.target.value);
+        });
+
+        // Ekspor chart
+        DOM.btnExportChart.addEventListener('click', () => ChartManager.exportPNG());
+
+        // NOTE: Tidak ada window resize listener.
+        // Chart.js dengan `responsive: true` sudah menangani ini secara native.
+        // Re-render manual lewat resize adalah pekerjaan redundan yang lebih lambat.
+    }
+
+    // =============================================================================
+    // BOOTSTRAP
+    // =============================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        buildDOMRegistry();
+        bindEvents();
+    });
+
+    </script>
+</body>
+</html>
