@@ -9,8 +9,8 @@ const CONFIG = Object.freeze({
         SATURATED_HIGH: 100
     },
     COLOR: {
-        CRITICAL:  { bar: 'rgba(244,63,94,0.8)',   border: '#f43f5e' },
-        OPTIMAL:   { bar: 'rgba(20,184,166,0.8)',  border: '#14b8a6' },
+        CRITICAL: { bar: 'rgba(244,63,94,0.8)', border: '#f43f5e' },
+        OPTIMAL: { bar: 'rgba(20,184,166,0.8)', border: '#14b8a6' },
     },
     REQUIRED_HEADERS: [
         'kabupaten_kota', 'jumlah_puskesmas_2024', 'total_seluruh_nakes',
@@ -19,11 +19,11 @@ const CONFIG = Object.freeze({
     ],
     // 5 PROFESI TERPISAH sesuai kolom CSV
     PROFESI: [
-        { key: 'perawat', label: 'Perawat',                color: 'bg-blue-500',    glow: 'rgba(59,130,246,0.5)',   chart: 'rgba(59,130,246,0.85)',  border: 'rgba(59,130,246,1)'  },
-        { key: 'bidan',   label: 'Bidan',                  color: 'bg-purple-500',  glow: 'rgba(168,85,247,0.5)',   chart: 'rgba(168,85,247,0.85)',  border: 'rgba(168,85,247,1)'  },
-        { key: 'kesmas',  label: 'Kesmas',                 color: 'bg-amber-500',   glow: 'rgba(245,158,11,0.5)',   chart: 'rgba(245,158,11,0.85)',  border: 'rgba(245,158,11,1)'  },
-        { key: 'kesling', label: 'Kesling',                color: 'bg-emerald-500', glow: 'rgba(16,185,129,0.5)',   chart: 'rgba(16,185,129,0.85)',  border: 'rgba(16,185,129,1)'  },
-        { key: 'gizi',    label: 'Gizi',                   color: 'bg-rose-500',    glow: 'rgba(244,63,94,0.5)',    chart: 'rgba(244,63,94,0.85)',   border: 'rgba(244,63,94,1)'   },
+        { key: 'perawat', label: 'Perawat', color: 'bg-blue-500', glow: 'rgba(59,130,246,0.5)', chart: 'rgba(59,130,246,0.85)', border: 'rgba(59,130,246,1)' },
+        { key: 'bidan', label: 'Bidan', color: 'bg-purple-500', glow: 'rgba(168,85,247,0.5)', chart: 'rgba(168,85,247,0.85)', border: 'rgba(168,85,247,1)' },
+        { key: 'kesmas', label: 'Kesmas', color: 'bg-amber-500', glow: 'rgba(245,158,11,0.5)', chart: 'rgba(245,158,11,0.85)', border: 'rgba(245,158,11,1)' },
+        { key: 'kesling', label: 'Kesling', color: 'bg-emerald-500', glow: 'rgba(16,185,129,0.5)', chart: 'rgba(16,185,129,0.85)', border: 'rgba(16,185,129,1)' },
+        { key: 'gizi', label: 'Gizi', color: 'bg-rose-500', glow: 'rgba(244,63,94,0.5)', chart: 'rgba(244,63,94,0.85)', border: 'rgba(244,63,94,1)' },
     ],
     DEMO_DATA: `kabupaten_kota,jumlah_puskesmas_2024,total_seluruh_nakes,rasio_nakes_per_puskesmas,jumlah_perawat,jumlah_bidan,jumlah_kesmas,jumlah_kesling,jumlah_gizi
 Kabupaten Aceh Selatan,27,443,16.41,178,217,23,9,16
@@ -121,36 +121,36 @@ const State = {
 let DOM = {};
 function buildDOMRegistry() {
     DOM = {
-        dropZone:        document.getElementById('dropZone'),
-        fileInput:       document.getElementById('csvFileInput'),
-        uploadPrompt:    document.getElementById('uploadPrompt'),
-        uploadLoading:   document.getElementById('uploadLoading'),
-        progressBar:     document.getElementById('progressBar'),
-        errorMessage:    document.getElementById('errorMessage'),
-        dashboardContent:document.getElementById('dashboardContent'),
-        kpiWilayah:      document.getElementById('kpiWilayah'),
-        kpiRasioRendah:  document.getElementById('kpiRasioRendah'),
-        kpiNamaRendah:   document.getElementById('kpiNamaRendah'),
-        kpiRasioTinggi:  document.getElementById('kpiRasioTinggi'),
-        kpiNamaTinggi:   document.getElementById('kpiNamaTinggi'),
-        kpiTotalNakes:   document.getElementById('kpiTotalNakes'),
-        wilayahSelect:   document.getElementById('wilayahSelect'),
-        searchWilayah:   document.getElementById('searchWilayah'),
+        dropZone: document.getElementById('dropZone'),
+        fileInput: document.getElementById('csvFileInput'),
+        uploadPrompt: document.getElementById('uploadPrompt'),
+        uploadLoading: document.getElementById('uploadLoading'),
+        progressBar: document.getElementById('progressBar'),
+        errorMessage: document.getElementById('errorMessage'),
+        dashboardContent: document.getElementById('dashboardContent'),
+        kpiWilayah: document.getElementById('kpiWilayah'),
+        kpiRasioRendah: document.getElementById('kpiRasioRendah'),
+        kpiNamaRendah: document.getElementById('kpiNamaRendah'),
+        kpiRasioTinggi: document.getElementById('kpiRasioTinggi'),
+        kpiNamaTinggi: document.getElementById('kpiNamaTinggi'),
+        kpiTotalNakes: document.getElementById('kpiTotalNakes'),
+        wilayahSelect: document.getElementById('wilayahSelect'),
+        searchWilayah: document.getElementById('searchWilayah'),
         detailPuskesmas: document.getElementById('detailPuskesmas'),
-        detailTotalNakes:document.getElementById('detailTotalNakes'),
-        detailRasio:     document.getElementById('detailRasio'),
+        detailTotalNakes: document.getElementById('detailTotalNakes'),
+        detailRasio: document.getElementById('detailRasio'),
         detailStatusBadge: document.getElementById('detailStatusBadge'),
-        profesiBreakdown:document.getElementById('profesiBreakdown'),
+        profesiBreakdown: document.getElementById('profesiBreakdown'),
         profesiDoughnutChart: document.getElementById('profesiDoughnutChart'),
-        wilayahRadarChart:    document.getElementById('wilayahRadarChart'),
+        wilayahRadarChart: document.getElementById('wilayahRadarChart'),
         insightDisparitas: document.getElementById('insightDisparitas'),
-        insightDominasi:   document.getElementById('insightDominasi'),
-        btnExportChart:  document.getElementById('btnExportChart'),
-        rasioLineChart:  document.getElementById('rasioLineChart'),
+        insightDominasi: document.getElementById('insightDominasi'),
+        btnExportChart: document.getElementById('btnExportChart'),
+        rasioLineChart: document.getElementById('rasioLineChart'),
         btnExportLineChart: document.getElementById('btnExportLineChart'),
         profileGranularPanel: document.getElementById('profileGranularPanel'),
         demoDataContainer: document.getElementById('demoDataContainer'),
-        btnLoadDemo:      document.getElementById('btnLoadDemo'),
+        btnLoadDemo: document.getElementById('btnLoadDemo'),
         provincialAgregatGrid: document.getElementById('provincialAgregatGrid'),
     };
 }
@@ -181,24 +181,24 @@ const DataPipeline = {
 
     mapRow(row) {
         const puskesmas = parseInt(row['jumlah_puskesmas_2024']) || 0;
-        const total     = parseInt(row['total_seluruh_nakes'])   || 0;
-        let rasio       = parseFloat(row['rasio_nakes_per_puskesmas']);
-        
+        const total = parseInt(row['total_seluruh_nakes']) || 0;
+        let rasio = parseFloat(row['rasio_nakes_per_puskesmas']);
+
         // Pengaman validasi rasio: jika NaN atau 0, hitung ulang secara otomatis
         if (isNaN(rasio) || rasio === 0) {
             rasio = puskesmas > 0 ? parseFloat((total / puskesmas).toFixed(2)) : 0;
         }
 
         return {
-            nama:      row['kabupaten_kota'] || 'Wilayah Tidak Diketahui',
+            nama: row['kabupaten_kota'] || 'Wilayah Tidak Diketahui',
             puskesmas,
             total,
             rasio,
-            perawat:   parseInt(row['jumlah_perawat']) || 0,
-            bidan:     parseInt(row['jumlah_bidan'])   || 0,
-            kesmas:    parseInt(row['jumlah_kesmas'])  || 0,
-            kesling:   parseInt(row['jumlah_kesling']) || 0,
-            gizi:      parseInt(row['jumlah_gizi'])    || 0,
+            perawat: parseInt(row['jumlah_perawat']) || 0,
+            bidan: parseInt(row['jumlah_bidan']) || 0,
+            kesmas: parseInt(row['jumlah_kesmas']) || 0,
+            kesling: parseInt(row['jumlah_kesling']) || 0,
+            gizi: parseInt(row['jumlah_gizi']) || 0,
         };
     },
 
@@ -268,10 +268,10 @@ const ChartManager = {
             this.instanceBar = null;
         }
 
-        const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
+        const labels = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
         const dataRasio = records.map(r => r.rasio);
 
-        const gradOptimal  = ctx.createLinearGradient(0, 0, 0, 350);
+        const gradOptimal = ctx.createLinearGradient(0, 0, 0, 350);
         gradOptimal.addColorStop(0, 'rgba(20,184,166,0.85)');
         gradOptimal.addColorStop(1, 'rgba(13,148,136,0.1)');
 
@@ -279,7 +279,7 @@ const ChartManager = {
         gradCritical.addColorStop(0, 'rgba(244,63,94,0.85)');
         gradCritical.addColorStop(1, 'rgba(225,29,72,0.1)');
 
-        const bgColors     = records.map(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW ? gradCritical : gradOptimal);
+        const bgColors = records.map(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW ? gradCritical : gradOptimal);
         const borderColors = records.map(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW ? CONFIG.COLOR.CRITICAL.border : CONFIG.COLOR.OPTIMAL.border);
 
         const isMobile = window.innerWidth < 640;
@@ -308,7 +308,7 @@ const ChartManager = {
                         padding: 12,
                         backgroundColor: '#020617',
                         titleFont: { size: 12, weight: 'bold', family: 'Plus Jakarta Sans' },
-                        bodyFont:  { size: 12, family: 'Plus Jakarta Sans' },
+                        bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
                         borderColor: '#1e293b',
                         borderWidth: 1,
                         cornerRadius: 8,
@@ -391,7 +391,7 @@ const ChartManager = {
                         padding: 12,
                         backgroundColor: '#020617',
                         titleFont: { size: 12, weight: 'bold', family: 'Plus Jakarta Sans' },
-                        bodyFont:  { size: 12, family: 'Plus Jakarta Sans' },
+                        bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
                         borderColor: '#1e293b',
                         borderWidth: 1,
                         cornerRadius: 8,
@@ -701,8 +701,8 @@ const DetailRenderer = {
         animateNumber(DOM.detailRasio, record.rasio, true, '', false);
 
         const status = this.getStatus(record.rasio);
-        DOM.detailStatusBadge.textContent  = status.label;
-        DOM.detailStatusBadge.className    = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${status.cls}`;
+        DOM.detailStatusBadge.textContent = status.label;
+        DOM.detailStatusBadge.className = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${status.cls}`;
 
         // Trigger container pulse highlight animation
         if (DOM.profileGranularPanel) {
@@ -715,11 +715,11 @@ const DetailRenderer = {
         const total = record.total || 1;
         CONFIG.PROFESI.forEach(p => {
             const count = record[p.key];
-            const pct   = ((count / total) * 100).toFixed(1);
+            const pct = ((count / total) * 100).toFixed(1);
             const container = document.getElementById(`profesi-item-${p.key}`);
             if (container) {
                 const countElem = container.querySelector('.breakdown-count');
-                const barElem   = container.querySelector('.breakdown-bar');
+                const barElem = container.querySelector('.breakdown-bar');
                 animateNumber(countElem, count, false, ' Org', true);
                 barElem.style.width = `${pct}%`;
             }
@@ -736,9 +736,9 @@ const DetailRenderer = {
 // =============================================================================
 const InsightEngine = {
     generate(records) {
-        const lowest  = records[0];
+        const lowest = records[0];
         const highest = records[records.length - 1];
-        const gapPct  = (((highest.rasio - lowest.rasio) / lowest.rasio) * 100).toFixed(0);
+        const gapPct = (((highest.rasio - lowest.rasio) / lowest.rasio) * 100).toFixed(0);
 
         const criticalCount = records.filter(r => r.rasio < CONFIG.THRESHOLD.CRITICAL_LOW).length;
         const saturatedCount = records.filter(r => r.rasio >= CONFIG.THRESHOLD.SATURATED_HIGH).length;
@@ -763,7 +763,7 @@ const InsightEngine = {
             total: records.reduce((sum, r) => sum + r[p.key], 0)
         })).sort((a, b) => b.total - a.total);
 
-        const dominan  = totals[0];
+        const dominan = totals[0];
         const runnerup = totals[1];
 
         DOM.insightDominasi.innerHTML = `
@@ -783,45 +783,67 @@ const InsightEngine = {
 // =============================================================================
 const KPIRenderer = {
     render(records) {
-        const lowest  = records[0];
+        const lowest = records[0];
         const highest = records[records.length - 1];
-        const total   = records.reduce((sum, r) => sum + r.total, 0);
+        const total = records.reduce((sum, r) => sum + r.total, 0);
         const totalPuskesmas = records.reduce((sum, r) => sum + r.puskesmas, 0);
 
-        DOM.kpiWilayah.textContent      = records.length;
-        DOM.kpiRasioRendah.textContent  = lowest.rasio;
-        DOM.kpiNamaRendah.textContent   = lowest.nama;
-        DOM.kpiRasioTinggi.textContent  = highest.rasio;
-        DOM.kpiNamaTinggi.textContent   = highest.nama;
-        DOM.kpiTotalNakes.textContent   = total.toLocaleString('id-ID');
+        DOM.kpiWilayah.textContent = records.length;
+        DOM.kpiRasioRendah.textContent = lowest.rasio;
+        DOM.kpiNamaRendah.textContent = lowest.nama;
+        DOM.kpiRasioTinggi.textContent = highest.rasio;
+        DOM.kpiNamaTinggi.textContent = highest.nama;
+        DOM.kpiTotalNakes.textContent = total.toLocaleString('id-ID');
 
         if (DOM.provincialAgregatGrid) {
+            const colorMap = {
+                perawat: { text: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/15', hoverBorder: 'hover:border-blue-500/40', hoverText: 'group-hover:text-blue-400', pingBg: 'bg-blue-400', dotBg: 'bg-blue-500', glow: 'bg-blue-500/10' },
+                bidan: { text: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/15', hoverBorder: 'hover:border-purple-500/40', hoverText: 'group-hover:text-purple-400', pingBg: 'bg-purple-400', dotBg: 'bg-purple-500', glow: 'bg-purple-500/10' },
+                kesmas: { text: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/15', hoverBorder: 'hover:border-amber-500/40', hoverText: 'group-hover:text-amber-400', pingBg: 'bg-amber-400', dotBg: 'bg-amber-500', glow: 'bg-amber-500/10' },
+                kesling: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/15', hoverBorder: 'hover:border-emerald-500/40', hoverText: 'group-hover:text-emerald-400', pingBg: 'bg-emerald-400', dotBg: 'bg-emerald-500', glow: 'bg-emerald-500/10' },
+                gizi: { text: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/15', hoverBorder: 'hover:border-rose-500/40', hoverText: 'group-hover:text-rose-400', pingBg: 'bg-rose-400', dotBg: 'bg-rose-500', glow: 'bg-rose-500/10' }
+            };
+
             DOM.provincialAgregatGrid.innerHTML = CONFIG.PROFESI.map(p => {
                 const totalProfesi = records.reduce((sum, r) => sum + r[p.key], 0);
                 const avgProfesi = totalPuskesmas > 0 ? (totalProfesi / totalPuskesmas).toFixed(1) : 0;
+                const c = colorMap[p.key];
                 
-                // Extract opacity-0.05 color from theme color for glow effect
-                const glowBg = p.border.replace('1)', '0.05)');
-                
+                // Define inline icons matching KPI icons
+                let svgIcon = '';
+                if (p.key === 'perawat') {
+                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                } else if (p.key === 'bidan') {
+                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+                } else if (p.key === 'kesmas') {
+                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`;
+                } else if (p.key === 'kesling') {
+                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+                } else {
+                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>`;
+                }
+
                 return `
-                    <div class="group/item relative overflow-hidden bg-slate-900/40 border border-slate-800/60 rounded-xl p-3.5 transition-all duration-300 hover:border-slate-700/60 hover:bg-slate-900/80 hover:-translate-y-0.5 transform-gpu" style="border-left: 3px solid ${p.border};">
-                        
-                        <!-- Glow Effect -->
-                        <div class="absolute -right-2 -top-2 w-12 h-12 rounded-full blur-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 pointer-events-none" style="background-color: ${glowBg};">
+                    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl ${c.hoverBorder} hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 ${c.glow} rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                         </div>
-                        
-                        <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider truncate flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full ${p.color}"></span>
-                            ${p.label}
-                        </p>
-                        
-                        <p class="text-xl font-black text-slate-200 mt-1.5 tracking-tight transition-colors duration-300" style="color: #e2e8f0;" onmouseover="this.style.color='${p.border}'" onmouseout="this.style.color='#e2e8f0'">
-                            ${totalProfesi.toLocaleString('id-ID')}
-                        </p>
-                        
-                        <p class="text-[9px] text-slate-500 font-medium mt-1">
-                            Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')}/Pusk
-                        </p>
+
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">${p.label}</p>
+                                <p class="text-3xl font-black text-white mt-3 tracking-tight transition-colors duration-300 ${c.hoverText}">${totalProfesi.toLocaleString('id-ID')}</p>
+                            </div>
+                            <div class="p-2.5 ${c.bg} rounded-xl ${c.text} border ${c.border} transition-transform duration-300 group-hover:scale-105">
+                                ${svgIcon}
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
+                            <span class="flex h-2 w-2 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${c.pingBg} opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 ${c.dotBg}"></span>
+                            </span>
+                            <p class="text-xs text-slate-400 font-medium">Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')} / Pusk</p>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -904,7 +926,7 @@ function bindEvents() {
         DOM.btnLoadDemo.addEventListener('click', () => {
             DOM.uploadPrompt.classList.add('hidden');
             DOM.uploadLoading.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 Papa.parse(CONFIG.DEMO_DATA, {
                     header: true,
