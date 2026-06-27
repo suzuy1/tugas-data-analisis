@@ -14,6 +14,7 @@ Aplikasi web dashboard interaktif yang dirancang untuk menganalisis, memetakan, 
 
 3. **Visualisasi Data Interaktif (Chart.js)**
    * **Matriks Disparitas (Bar Chart)**: Memetakan rasio nakes per Puskesmas di setiap kabupaten/kota dengan pewarnaan zona (Zona Kritis `< 30` berwarna merah, Zona Optimal/Padat `>= 30` berwarna hijau/toska).
+   * **Perbandingan Sebaran Profesi (Line Chart)**: Menyajikan grafik tren garis multi-dataset sebaran 5 profesi nakes (Perawat, Bidan, Kesmas, Kesling, Gizi) per kabupaten/kota, lengkap dengan legenda interaktif untuk memfilter tampilan data secara real-time.
    * **Visual Komposisi Profesi (Doughnut Chart)**: Menampilkan kontribusi persentase dari 5 profesi nakes di kabupaten/kota terpilih (Perawat, Bidan, Kesmas, Kesling, dan Gizi).
    * **Profil vs Rata-rata Provinsi (Radar Chart)**: Menunjukkan perbandingan performa sebaran nakes di daerah terpilih terhadap rata-rata provinsi Aceh secara modular.
 
