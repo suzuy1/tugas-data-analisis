@@ -1,0 +1,27 @@
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+#dashboardContent {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#dashboardContent.is-hidden {
+    opacity: 0;
+    transform: translateY(1rem);
+    pointer-events: none;
+}
