@@ -151,6 +151,7 @@ function buildDOMRegistry() {
         profileGranularPanel: document.getElementById('profileGranularPanel'),
         demoDataContainer: document.getElementById('demoDataContainer'),
         btnLoadDemo:      document.getElementById('btnLoadDemo'),
+        provincialAgregatGrid: document.getElementById('provincialAgregatGrid'),
     };
 }
 
@@ -785,6 +786,7 @@ const KPIRenderer = {
         const lowest  = records[0];
         const highest = records[records.length - 1];
         const total   = records.reduce((sum, r) => sum + r.total, 0);
+        const totalPuskesmas = records.reduce((sum, r) => sum + r.puskesmas, 0);
 
         DOM.kpiWilayah.textContent      = records.length;
         DOM.kpiRasioRendah.textContent  = lowest.rasio;
@@ -792,6 +794,25 @@ const KPIRenderer = {
         DOM.kpiRasioTinggi.textContent  = highest.rasio;
         DOM.kpiNamaTinggi.textContent   = highest.nama;
         DOM.kpiTotalNakes.textContent   = total.toLocaleString('id-ID');
+
+        if (DOM.provincialAgregatGrid) {
+            DOM.provincialAgregatGrid.innerHTML = CONFIG.PROFESI.map(p => {
+                const totalProfesi = records.reduce((sum, r) => sum + r[p.key], 0);
+                const avgProfesi = totalPuskesmas > 0 ? (totalProfesi / totalPuskesmas).toFixed(1) : 0;
+                const borderStyle = `border-left-color: ${p.border}`;
+                
+                return `
+                    <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-3 flex flex-col hover:border-slate-700/80 transition-all duration-200" style="${borderStyle}; border-left-width: 3px;">
+                        <div class="flex items-center gap-1.5 mb-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full ${p.color}"></span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${p.label}</span>
+                        </div>
+                        <span class="text-sm font-black text-white leading-tight">${totalProfesi.toLocaleString('id-ID')}</span>
+                        <span class="text-[9px] text-slate-500 font-medium mt-0.5">Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')}/Pusk</span>
+                    </div>
+                `;
+            }).join('');
+        }
     }
 };
 

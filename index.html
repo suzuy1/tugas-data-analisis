@@ -238,7 +238,7 @@
                 <!-- Left Column (Bar Chart & Line Chart stacked vertically) -->
                 <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-6">
                     <!-- Matriks Disparitas (Bar Chart) -->
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl">
+                    <div class="bg-slate-950 border border-slate-900 rounded-2xl p-5 flex flex-col shadow-2xl">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-900 pb-4 mb-4">
                             <div>
                                 <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -263,7 +263,7 @@
                     </div>
 
                     <!-- Perbandingan Sebaran Profesi (Line Chart) -->
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl">
+                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col shadow-2xl">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-900 pb-4 mb-4">
                             <div>
                                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
@@ -284,6 +284,16 @@
                         <div class="relative h-96 w-full">
                             <canvas id="rasioLineChart" aria-label="Grafik perbandingan perawat dan bidan per puskesmas"
                                 role="img"></canvas>
+                        </div>
+                        <!-- Rangkuman Agregat Provinsi -->
+                        <div class="border-t border-slate-900 mt-6 pt-6">
+                            <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                                Rangkuman Akumulasi Seluruh Provinsi Aceh
+                            </h4>
+                            <div id="provincialAgregatGrid" class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+                                <!-- Diisi secara dinamis oleh app.js -->
+                            </div>
                         </div>
                     </div>
                 </div>
