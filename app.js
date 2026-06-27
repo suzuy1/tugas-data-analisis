@@ -799,16 +799,29 @@ const KPIRenderer = {
             DOM.provincialAgregatGrid.innerHTML = CONFIG.PROFESI.map(p => {
                 const totalProfesi = records.reduce((sum, r) => sum + r[p.key], 0);
                 const avgProfesi = totalPuskesmas > 0 ? (totalProfesi / totalPuskesmas).toFixed(1) : 0;
-                const borderStyle = `border-left-color: ${p.border}`;
+                
+                // Extract opacity-0.05 color from theme color for glow effect
+                const glowBg = p.border.replace('1)', '0.05)');
                 
                 return `
-                    <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-3 flex flex-col hover:border-slate-700/80 transition-all duration-200" style="${borderStyle}; border-left-width: 3px;">
-                        <div class="flex items-center gap-1.5 mb-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full ${p.color}"></span>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${p.label}</span>
+                    <div class="group/item relative overflow-hidden bg-slate-900/40 border border-slate-800/60 rounded-xl p-3.5 transition-all duration-300 hover:border-slate-700/60 hover:bg-slate-900/80 hover:-translate-y-0.5 transform-gpu" style="border-left: 3px solid ${p.border};">
+                        
+                        <!-- Glow Effect -->
+                        <div class="absolute -right-2 -top-2 w-12 h-12 rounded-full blur-lg opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 pointer-events-none" style="background-color: ${glowBg};">
                         </div>
-                        <span class="text-sm font-black text-white leading-tight">${totalProfesi.toLocaleString('id-ID')}</span>
-                        <span class="text-[9px] text-slate-500 font-medium mt-0.5">Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')}/Pusk</span>
+                        
+                        <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider truncate flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full ${p.color}"></span>
+                            ${p.label}
+                        </p>
+                        
+                        <p class="text-xl font-black text-slate-200 mt-1.5 tracking-tight transition-colors duration-300" style="color: #e2e8f0;" onmouseover="this.style.color='${p.border}'" onmouseout="this.style.color='#e2e8f0'">
+                            ${totalProfesi.toLocaleString('id-ID')}
+                        </p>
+                        
+                        <p class="text-[9px] text-slate-500 font-medium mt-1">
+                            Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')}/Pusk
+                        </p>
                     </div>
                 `;
             }).join('');

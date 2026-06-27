@@ -288,11 +288,14 @@
                         <!-- Rangkuman Agregat Provinsi -->
                         <div class="border-t border-slate-900 mt-6 pt-6">
                             <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                                <span class="flex h-1.5 w-1.5 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-teal-500"></span>
+                                </span>
                                 Rangkuman Akumulasi Seluruh Provinsi Aceh
                             </h4>
-                            <div id="provincialAgregatGrid" class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
-                                <!-- Diisi secara dinamis oleh app.js -->
+                            
+                            <div id="provincialAgregatGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                             </div>
                         </div>
                     </div>
