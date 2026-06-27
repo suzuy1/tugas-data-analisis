@@ -306,39 +306,72 @@ const ChartManager = {
         }
 
         const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
-        const dataRasio = records.map(r => r.rasio);
+        const dataPerawat = records.map(r => r.perawat);
+        const dataBidan   = records.map(r => r.bidan);
 
-        const gradLine = ctx.createLinearGradient(0, 0, 0, 350);
-        gradLine.addColorStop(0, 'rgba(20,184,166,0.3)');
-        gradLine.addColorStop(1, 'rgba(20,184,166,0)');
+        // Gradient for Perawat (Blue)
+        const gradPerawat = ctx.createLinearGradient(0, 0, 0, 350);
+        gradPerawat.addColorStop(0, 'rgba(59,130,246,0.2)');
+        gradPerawat.addColorStop(1, 'rgba(59,130,246,0)');
+
+        // Gradient for Bidan (Purple)
+        const gradBidan = ctx.createLinearGradient(0, 0, 0, 350);
+        gradBidan.addColorStop(0, 'rgba(168,85,247,0.2)');
+        gradBidan.addColorStop(1, 'rgba(168,85,247,0)');
 
         this.instanceLine = new Chart(canvas, {
             type: 'line',
             data: {
                 labels,
-                datasets: [{
-                    label: 'Tren Rasio Nakes',
-                    data: dataRasio,
-                    backgroundColor: gradLine,
-                    borderColor: '#14b8a6',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                    pointBackgroundColor: '#14b8a6',
-                    pointBorderColor: '#020617',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointHoverBackgroundColor: '#ffffff',
-                    pointHoverBorderColor: '#14b8a6',
-                    pointHoverBorderWidth: 3,
-                }]
+                datasets: [
+                    {
+                        label: 'Jumlah Perawat',
+                        data: dataPerawat,
+                        backgroundColor: gradPerawat,
+                        borderColor: '#3b82f6',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#020617',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#ffffff',
+                        pointHoverBorderColor: '#3b82f6',
+                        pointHoverBorderWidth: 3,
+                    },
+                    {
+                        label: 'Jumlah Bidan',
+                        data: dataBidan,
+                        backgroundColor: gradBidan,
+                        borderColor: '#a855f7',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#a855f7',
+                        pointBorderColor: '#020617',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#ffffff',
+                        pointHoverBorderColor: '#a855f7',
+                        pointHoverBorderWidth: 3,
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                        }
+                    },
                     tooltip: {
                         padding: 12,
                         backgroundColor: '#020617',
@@ -347,9 +380,9 @@ const ChartManager = {
                         borderColor: '#1e293b',
                         borderWidth: 1,
                         cornerRadius: 8,
-                        displayColors: false,
+                        displayColors: true,
                         callbacks: {
-                            label: ctx => ` Rasio: ${ctx.parsed.y} Nakes / Puskesmas`
+                            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString('id-ID')} Jiwa`
                         }
                     }
                 },
@@ -377,7 +410,7 @@ const ChartManager = {
     exportLinePNG() {
         if (!this.instanceLine) return;
         const link = document.createElement('a');
-        link.download = 'tren-rasio-nakes-aceh.png';
+        link.download = 'perbandingan-perawat-bidan-aceh.png';
         link.href = this.instanceLine.toBase64Image();
         link.click();
     }
