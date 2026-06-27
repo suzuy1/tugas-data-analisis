@@ -305,60 +305,38 @@ const ChartManager = {
             this.instanceLine = null;
         }
 
-        const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
-        const dataPerawat = records.map(r => r.perawat);
-        const dataBidan   = records.map(r => r.bidan);
+        const labels = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
 
-        // Gradient for Perawat (Blue)
-        const gradPerawat = ctx.createLinearGradient(0, 0, 0, 350);
-        gradPerawat.addColorStop(0, 'rgba(59,130,246,0.2)');
-        gradPerawat.addColorStop(1, 'rgba(59,130,246,0)');
+        const datasets = CONFIG.PROFESI.map(p => {
+            const grad = ctx.createLinearGradient(0, 0, 0, 350);
+            const bgColor = p.chart.replace('0.85', '0.12');
+            grad.addColorStop(0, bgColor);
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
 
-        // Gradient for Bidan (Purple)
-        const gradBidan = ctx.createLinearGradient(0, 0, 0, 350);
-        gradBidan.addColorStop(0, 'rgba(168,85,247,0.2)');
-        gradBidan.addColorStop(1, 'rgba(168,85,247,0)');
+            return {
+                label: p.label,
+                data: records.map(r => r[p.key]),
+                backgroundColor: grad,
+                borderColor: p.border,
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: p.border,
+                pointBorderColor: '#020617',
+                pointBorderWidth: 1.5,
+                pointRadius: 3.5,
+                pointHoverRadius: 5.5,
+                pointHoverBackgroundColor: '#ffffff',
+                pointHoverBorderColor: p.border,
+                pointHoverBorderWidth: 2.5,
+            };
+        });
 
         this.instanceLine = new Chart(canvas, {
             type: 'line',
             data: {
                 labels,
-                datasets: [
-                    {
-                        label: 'Jumlah Perawat',
-                        data: dataPerawat,
-                        backgroundColor: gradPerawat,
-                        borderColor: '#3b82f6',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.35,
-                        pointBackgroundColor: '#3b82f6',
-                        pointBorderColor: '#020617',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#ffffff',
-                        pointHoverBorderColor: '#3b82f6',
-                        pointHoverBorderWidth: 3,
-                    },
-                    {
-                        label: 'Jumlah Bidan',
-                        data: dataBidan,
-                        backgroundColor: gradBidan,
-                        borderColor: '#a855f7',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.35,
-                        pointBackgroundColor: '#a855f7',
-                        pointBorderColor: '#020617',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointHoverBackgroundColor: '#ffffff',
-                        pointHoverBorderColor: '#a855f7',
-                        pointHoverBorderWidth: 3,
-                    }
-                ]
+                datasets
             },
             options: {
                 responsive: true,
@@ -369,7 +347,8 @@ const ChartManager = {
                         position: 'top',
                         labels: {
                             color: '#94a3b8',
-                            font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' }
+                            font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' },
+                            padding: 15
                         }
                     },
                     tooltip: {
@@ -410,7 +389,7 @@ const ChartManager = {
     exportLinePNG() {
         if (!this.instanceLine) return;
         const link = document.createElement('a');
-        link.download = 'perbandingan-perawat-bidan-aceh.png';
+        link.download = 'sebaran-profesi-nakes-aceh.png';
         link.href = this.instanceLine.toBase64Image();
         link.click();
     }
