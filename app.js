@@ -797,52 +797,45 @@ const KPIRenderer = {
 
         if (DOM.provincialAgregatGrid) {
             const colorMap = {
-                perawat: { text: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/15', hoverBorder: 'hover:border-blue-500/40', hoverText: 'group-hover:text-blue-400', pingBg: 'bg-blue-400', dotBg: 'bg-blue-500', glow: 'bg-blue-500/10' },
-                bidan: { text: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/15', hoverBorder: 'hover:border-purple-500/40', hoverText: 'group-hover:text-purple-400', pingBg: 'bg-purple-400', dotBg: 'bg-purple-500', glow: 'bg-purple-500/10' },
-                kesmas: { text: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/15', hoverBorder: 'hover:border-amber-500/40', hoverText: 'group-hover:text-amber-400', pingBg: 'bg-amber-400', dotBg: 'bg-amber-500', glow: 'bg-amber-500/10' },
-                kesling: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/15', hoverBorder: 'hover:border-emerald-500/40', hoverText: 'group-hover:text-emerald-400', pingBg: 'bg-emerald-400', dotBg: 'bg-emerald-500', glow: 'bg-emerald-500/10' },
-                gizi: { text: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/15', hoverBorder: 'hover:border-rose-500/40', hoverText: 'group-hover:text-rose-400', pingBg: 'bg-rose-400', dotBg: 'bg-rose-500', glow: 'bg-rose-500/10' }
+                perawat:  { text: 'text-blue-400',    bg: 'bg-blue-500/10',    border: 'border-blue-500/15',    hoverBorder: 'hover:border-blue-500/40',    hoverText: 'group-hover:text-blue-400',    pingBg: 'bg-blue-400',    dotBg: 'bg-blue-500',    glow: 'bg-blue-500/10' },
+                bidan:    { text: 'text-purple-400',  bg: 'bg-purple-500/10',  border: 'border-purple-500/15',  hoverBorder: 'hover:border-purple-500/40',  hoverText: 'group-hover:text-purple-400',  pingBg: 'bg-purple-400',  dotBg: 'bg-purple-500',  glow: 'bg-purple-500/10' },
+                kesmas:   { text: 'text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/15',   hoverBorder: 'hover:border-amber-500/40',   hoverText: 'group-hover:text-amber-400',   pingBg: 'bg-amber-400',   dotBg: 'bg-amber-500',   glow: 'bg-amber-500/10' },
+                kesling:  { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/15', hoverBorder: 'hover:border-emerald-500/40', hoverText: 'group-hover:text-emerald-400', pingBg: 'bg-emerald-400', dotBg: 'bg-emerald-500', glow: 'bg-emerald-500/10' },
+                gizi:     { text: 'text-rose-400',    bg: 'bg-rose-500/10',    border: 'border-rose-500/15',    hoverBorder: 'hover:border-rose-500/40',    hoverText: 'group-hover:text-rose-400',    pingBg: 'bg-rose-400',    dotBg: 'bg-rose-500',    glow: 'bg-rose-500/10' }
+            };
+
+            const iconMap = {
+                perawat:  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+                bidan:    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+                kesmas:   `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`,
+                kesling:  `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+                gizi:     `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>`
             };
 
             DOM.provincialAgregatGrid.innerHTML = CONFIG.PROFESI.map(p => {
                 const totalProfesi = records.reduce((sum, r) => sum + r[p.key], 0);
                 const avgProfesi = totalPuskesmas > 0 ? (totalProfesi / totalPuskesmas).toFixed(1) : 0;
                 const c = colorMap[p.key];
-                
-                // Define inline icons matching KPI icons
-                let svgIcon = '';
-                if (p.key === 'perawat') {
-                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
-                } else if (p.key === 'bidan') {
-                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-                } else if (p.key === 'kesmas') {
-                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`;
-                } else if (p.key === 'kesling') {
-                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
-                } else {
-                    svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>`;
-                }
 
                 return `
-                    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl ${c.hoverBorder} hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
-                        <div class="absolute -right-4 -top-4 w-20 h-20 ${c.glow} rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        </div>
+                    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-xl p-4 shadow-lg ${c.hoverBorder} hover:-translate-y-0.5 transform-gpu transition-[transform,border-color] duration-300">
+                        <div class="absolute -right-3 -top-3 w-14 h-14 ${c.glow} rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
                         <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">${p.label}</p>
-                                <p class="text-3xl font-black text-white mt-3 tracking-tight transition-colors duration-300 ${c.hoverText}">${totalProfesi.toLocaleString('id-ID')}</p>
+                            <div class="min-w-0">
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider truncate">${p.label}</p>
+                                <p class="text-2xl font-black text-white mt-2 tracking-tight transition-colors duration-300 ${c.hoverText}">${totalProfesi.toLocaleString('id-ID')}</p>
                             </div>
-                            <div class="p-2.5 ${c.bg} rounded-xl ${c.text} border ${c.border} transition-transform duration-300 group-hover:scale-105">
-                                ${svgIcon}
+                            <div class="p-2 ${c.bg} rounded-lg ${c.text} border ${c.border} transition-transform duration-300 group-hover:scale-110 shrink-0 ml-2">
+                                ${iconMap[p.key]}
                             </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
-                            <span class="flex h-2 w-2 relative">
+                        <div class="mt-3 pt-2.5 border-t border-slate-900 flex items-center gap-1.5">
+                            <span class="flex h-1.5 w-1.5 relative shrink-0">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${c.pingBg} opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 ${c.dotBg}"></span>
+                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 ${c.dotBg}"></span>
                             </span>
-                            <p class="text-xs text-slate-400 font-medium">Rata-rata: ${Number(avgProfesi).toLocaleString('id-ID')} / Pusk</p>
+                            <p class="text-[10px] text-slate-500 font-medium whitespace-nowrap">Avg: ${Number(avgProfesi).toLocaleString('id-ID')}/Pusk</p>
                         </div>
                     </div>
                 `;
