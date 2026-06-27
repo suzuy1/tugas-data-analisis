@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,21 +22,28 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="style.css">
-<base target="_blank">
+    <base target="_blank">
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased selection:bg-teal-500/30 selection:text-teal-200">
+
+<body
+    class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased selection:bg-teal-500/30 selection:text-teal-200">
 
     <header class="border-b border-slate-800 bg-slate-950/60 backdrop-blur sticky top-0 z-50" role="banner">
-        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div
+            class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-400 border border-teal-500/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse mr-1.5"></span>
                     Kesehatan · Data Analisis
                 </span>
-                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight mt-1.5">Pemerataan Tenaga Kesehatan Dasar Provinsi Aceh</h1>
-                <p class="text-xs text-slate-400 mt-0.5">Analisis Komprehensif Integrasi Dataset Sektoral Faskes & Nakes Puskesmas</p>
+                <h1 class="text-xl md:text-2xl font-extrabold text-white tracking-tight mt-1.5">Pemerataan Tenaga
+                    Kesehatan Dasar Provinsi Aceh</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Analisis Komprehensif Integrasi Dataset Sektoral Faskes & Nakes
+                    Puskesmas</p>
             </div>
-            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-left md:text-right text-xs text-slate-300 w-full md:w-auto shadow-xl">
+            <div
+                class="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 text-left md:text-right text-xs text-slate-300 w-full md:w-auto shadow-xl">
                 <p class="font-bold text-teal-400">Analisis Data</p>
                 <!-- <p class="mt-1 font-medium">Nama 1 · Nama 2 · Nama 3 · Nama 4 · Nama 5</p> -->
             </div>
@@ -45,34 +54,48 @@
 
         <!-- Upload Zone -->
         <section aria-label="Unggah Berkas Data">
-            <div id="dropZone" class="bg-slate-950 border-2 border-dashed border-slate-800 hover:border-teal-500/80 rounded-2xl p-8 text-center transition-all duration-300 group cursor-pointer shadow-2xl">
+            <div id="dropZone"
+                class="bg-slate-950 border-2 border-dashed border-slate-800 hover:border-teal-500/80 rounded-2xl p-8 text-center transition-all duration-300 group cursor-pointer shadow-2xl">
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden" aria-label="Pilih berkas CSV">
 
                 <div id="uploadPrompt" class="max-w-md mx-auto space-y-4">
-                    <div class="mx-auto w-14 h-14 bg-slate-900 border border-slate-800 group-hover:border-teal-500/30 group-hover:bg-teal-500/5 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-teal-400 transition-all duration-300">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    <div
+                        class="mx-auto w-14 h-14 bg-slate-900 border border-slate-800 group-hover:border-teal-500/30 group-hover:bg-teal-500/5 rounded-2xl flex items-center justify-center text-slate-400 group-hover:text-teal-400 transition-all duration-300">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
                     </div>
                     <div class="space-y-1">
-                        <h3 class="text-sm font-bold text-white group-hover:text-teal-300 transition-colors">Seret & Lepas Berkas Hasil SQL</h3>
-                        <p class="text-xs text-slate-400">Atau klik untuk memilih file <span class="text-teal-400 font-mono font-medium">.csv</span></p>
+                        <h3 class="text-sm font-bold text-white group-hover:text-teal-300 transition-colors">Seret &
+                            Lepas Berkas Hasil SQL</h3>
+                        <p class="text-xs text-slate-400">Atau klik untuk memilih file <span
+                                class="text-teal-400 font-mono font-medium">.csv</span></p>
                     </div>
-                    <div class="text-[10px] text-slate-500 bg-slate-900/60 inline-block px-3 py-1 rounded-md border border-slate-800/80">
+                    <div
+                        class="text-[10px] text-slate-500 bg-slate-900/60 inline-block px-3 py-1 rounded-md border border-slate-800/80">
                         Validasi Otomatis: Skema Header Ekspor Supabase
                     </div>
                 </div>
 
                 <div id="uploadLoading" class="hidden max-w-xs mx-auto space-y-4 py-4">
-                    <div class="w-12 h-12 mx-auto rounded-full border-4 border-slate-800 border-t-teal-500 animate-spin"></div>
+                    <div
+                        class="w-12 h-12 mx-auto rounded-full border-4 border-slate-800 border-t-teal-500 animate-spin">
+                    </div>
                     <div class="space-y-1.5">
-                        <p class="text-xs font-semibold text-teal-400 uppercase tracking-wider animate-pulse">Memproses Data...</p>
+                        <p class="text-xs font-semibold text-teal-400 uppercase tracking-wider animate-pulse">Memproses
+                            Data...</p>
                         <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                            <div id="progressBar" class="bg-teal-500 h-full w-0 transition-all duration-300 ease-out"></div>
+                            <div id="progressBar" class="bg-teal-500 h-full w-0 transition-all duration-300 ease-out">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="errorMessage" class="hidden mt-3 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl" role="alert" aria-live="polite"></div>
+            <div id="errorMessage"
+                class="hidden mt-3 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl"
+                role="alert" aria-live="polite"></div>
         </section>
 
         <!-- Dashboard -->
@@ -80,108 +103,184 @@
 
             <!-- KPI Cards -->
             <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Indikator Kinerja Utama">
-    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-sky-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
-        <div class="absolute -right-4 -top-4 w-20 h-20 bg-sky-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cakupan Wilayah</p>
-                <p id="kpiWilayah" class="text-3xl font-black text-white mt-3 tracking-tight">–</p>
-            </div>
-            <div class="p-2.5 bg-sky-500/10 rounded-xl text-sky-400 border border-sky-500/15 transition-transform duration-300 group-hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-            </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
-            <span class="flex h-2 w-2 relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
-            </span>
-            <p class="text-xs text-slate-400 font-medium">Kabupaten / Kota ter-parsing</p>
-        </div>
-    </div>
+                <div
+                    class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-sky-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-sky-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    </div>
 
-    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-rose-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
-        <div class="absolute -right-4 -top-4 w-20 h-20 bg-rose-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi Kritis</p>
-                <p id="kpiRasioRendah" class="text-3xl font-black text-rose-400 mt-3 tracking-tight">–</p>
-            </div>
-            <div class="p-2.5 bg-rose-500/10 rounded-xl text-rose-400 border border-rose-500/15 transition-transform duration-300 group-hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 17-5.5-5.5-4 4-7.5-7.5"/><path d="M16 17h6v-6"/></svg>
-            </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2 overflow-hidden">
-            <span class="h-2 w-2 rounded-full bg-rose-500 shrink-0"></span>
-            <p id="kpiNamaRendah" class="text-xs text-slate-400 font-medium truncate">–</p>
-        </div>
-    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cakupan Wilayah</p>
+                            <p id="kpiWilayah" class="text-3xl font-black text-white mt-3 tracking-tight">–</p>
+                        </div>
+                        <div
+                            class="p-2.5 bg-sky-500/10 rounded-xl text-sky-400 border border-sky-500/15 transition-transform duration-300 group-hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                                <path d="M2 12h20" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
+                        <span class="flex h-2 w-2 relative">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                        </span>
+                        <p class="text-xs text-slate-400 font-medium">Kabupaten / Kota ter-parsing</p>
+                    </div>
+                </div>
 
-    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-emerald-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
-        <div class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi Padat</p>
-                <p id="kpiRasioTinggi" class="text-3xl font-black text-emerald-400 mt-3 tracking-tight">–</p>
-            </div>
-            <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/15 transition-transform duration-300 group-hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.5 8.5-5-5L2 18"/><path d="M16 7h6v6"/></svg>
-            </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2 overflow-hidden">
-            <span class="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
-            <p id="kpiNamaTinggi" class="text-xs text-slate-400 font-medium truncate">–</p>
-        </div>
-    </div>
+                <div
+                    class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-rose-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-rose-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    </div>
 
-    <div class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-teal-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
-        <div class="absolute -right-4 -top-4 w-20 h-20 bg-teal-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-        
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Agregat Nakes</p>
-                <p id="kpiTotalNakes" class="text-3xl font-black text-teal-400 mt-3 tracking-tight">–</p>
-            </div>
-            <div class="p-2.5 bg-teal-500/10 rounded-xl text-teal-400 border border-teal-500/15 transition-transform duration-300 group-hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-        </div>
-        <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-teal-500"></span>
-            <p class="text-xs text-slate-400 font-medium">Jiwa terintegrasi di Puskesmas</p>
-        </div>
-    </div>
-</section>  
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi
+                                Kritis</p>
+                            <p id="kpiRasioRendah" class="text-3xl font-black text-rose-400 mt-3 tracking-tight">–</p>
+                        </div>
+                        <div
+                            class="p-2.5 bg-rose-500/10 rounded-xl text-rose-400 border border-rose-500/15 transition-transform duration-300 group-hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m22 17-5.5-5.5-4 4-7.5-7.5" />
+                                <path d="M16 17h6v-6" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2 overflow-hidden">
+                        <span class="h-2 w-2 rounded-full bg-rose-500 shrink-0"></span>
+                        <p id="kpiNamaRendah" class="text-xs text-slate-400 font-medium truncate">–</p>
+                    </div>
+                </div>
+
+                <div
+                    class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-emerald-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    </div>
+
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rasio Alokasi Padat
+                            </p>
+                            <p id="kpiRasioTinggi" class="text-3xl font-black text-emerald-400 mt-3 tracking-tight">–
+                            </p>
+                        </div>
+                        <div
+                            class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400 border border-emerald-500/15 transition-transform duration-300 group-hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="m22 7-8.5 8.5-5-5L2 18" />
+                                <path d="M16 7h6v6" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2 overflow-hidden">
+                        <span class="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
+                        <p id="kpiNamaTinggi" class="text-xs text-slate-400 font-medium truncate">–</p>
+                    </div>
+                </div>
+
+                <div
+                    class="group relative overflow-hidden bg-slate-950 border border-slate-800/80 rounded-2xl p-6 shadow-xl hover:border-teal-500/40 hover:-translate-y-1 transform-gpu transition-[transform,border-color] duration-300">
+                    <div
+                        class="absolute -right-4 -top-4 w-20 h-20 bg-teal-500/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    </div>
+
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Agregat Nakes
+                            </p>
+                            <p id="kpiTotalNakes" class="text-3xl font-black text-teal-400 mt-3 tracking-tight">–</p>
+                        </div>
+                        <div
+                            class="p-2.5 bg-teal-500/10 rounded-xl text-teal-400 border border-teal-500/15 transition-transform duration-300 group-hover:scale-105">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-900 flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-teal-500"></span>
+                        <p class="text-xs text-slate-400 font-medium">Jiwa terintegrasi di Puskesmas</p>
+                    </div>
+                </div>
+            </section>
 
             <!-- Chart + Detail Panel (STACKED VERTICALLY) -->
             <section class="space-y-6">
 
                 <!-- Matriks Disparitas -->
                 <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-850 pb-4 mb-4">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-850 pb-4 mb-4">
                         <div>
                             <h2 class="text-base font-bold text-white flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-teal-500"></span>
                                 Matriks Disparitas Kepadatan Tenaga Medis
                             </h2>
-                            <p class="text-xs text-slate-400 mt-0.5">Rasio nakes per unit Puskesmas per kabupaten/kota</p>
-                            <div class="h-[2px] w-32 bg-gradient-to-r from-teal-500 to-transparent mt-3 rounded-full"></div>
+                            <p class="text-xs text-slate-400 mt-0.5">Rasio nakes per unit Puskesmas per kabupaten/kota
+                            </p>
+                            <div class="h-[2px] w-32 bg-gradient-to-r from-teal-500 to-transparent mt-3 rounded-full">
+                            </div>
                         </div>
-                        <button id="btnExportChart" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-500">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <button id="btnExportChart"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-500">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
                             Ekspor (.png)
                         </button>
                     </div>
                     <div class="relative h-96 w-full">
-                        <canvas id="rasioChart" aria-label="Grafik disparitas rasio nakes per puskesmas" role="img"></canvas>
+                        <canvas id="rasioChart" aria-label="Grafik disparitas rasio nakes per puskesmas"
+                            role="img"></canvas>
+                    </div>
+                    <div class="border-t border-slate-900 mt-6 pt-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                                    Tren Rasio Kepadatan Tenaga Medis
+                                </h3>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Representasi tren garis sebaran rasio Puskesmas</p>
+                            </div>
+                            <button id="btnExportLineChart"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-lg text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-teal-500">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Ekspor (.png)
+                            </button>
+                        </div>
+                        <div class="relative h-96 w-full">
+                            <canvas id="rasioLineChart" aria-label="Grafik tren garis rasio nakes per puskesmas"
+                                role="img"></canvas>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Profil Granular Wilayah -->
-                <div id="profileGranularPanel" class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl transition-all duration-300">
+                <div id="profileGranularPanel"
+                    class="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col shadow-2xl transition-all duration-300">
                     <div class="border-b border-slate-900 pb-3 mb-5">
                         <h2 class="text-base font-bold text-white">Profil Granular Wilayah</h2>
                         <p class="text-xs text-slate-400 mt-0.5">Pilih daerah untuk melihat detail komponennya</p>
@@ -192,9 +291,15 @@
                         <div class="relative">
                             <input type="text" id="searchWilayah" placeholder="Ketik nama kabupaten/kota..."
                                 class="w-full bg-slate-900 border border-slate-800 focus:border-teal-500/80 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition duration-200">
-                            <svg class="absolute left-3 top-2.5 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <svg class="absolute left-3 top-2.5 w-4 h-4 text-slate-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                         </div>
-                        <select id="wilayahSelect" class="w-full bg-slate-900 border border-slate-800 focus:border-teal-500/80 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none transition duration-200 cursor-pointer" aria-label="Pilih kabupaten/kota"></select>
+                        <select id="wilayahSelect"
+                            class="w-full bg-slate-900 border border-slate-800 focus:border-teal-500/80 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none transition duration-200 cursor-pointer"
+                            aria-label="Pilih kabupaten/kota"></select>
                     </div>
 
                     <div class="space-y-4 flex-1">
@@ -205,14 +310,17 @@
                             </div>
                             <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-800/40">
                                 <span class="text-[11px] font-medium text-slate-400 block">Total Nakes</span>
-                                <span id="detailTotalNakes" class="text-base font-bold text-teal-400 mt-0.5 block">–</span>
+                                <span id="detailTotalNakes"
+                                    class="text-base font-bold text-teal-400 mt-0.5 block">–</span>
                             </div>
                         </div>
 
-                        <div class="bg-gradient-to-r from-slate-900 to-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div
+                            class="bg-gradient-to-r from-slate-900 to-slate-950 p-4 rounded-xl border border-slate-800">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-slate-400">Rasio Kepadatan Alokasi</span>
-                                <span id="detailStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full border">–</span>
+                                <span id="detailStatusBadge"
+                                    class="text-[10px] font-bold px-2 py-0.5 rounded-full border">–</span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span id="detailRasio" class="text-3xl font-black text-white tracking-tight">–</span>
@@ -232,19 +340,26 @@
                         <div class="space-y-3 pt-3 border-t border-slate-900">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Visual Komposisi</h3>
                             <div class="relative h-48 w-full">
-                                <canvas id="profesiDoughnutChart" aria-label="Grafik doughnut komposisi profesi"></canvas>
+                                <canvas id="profesiDoughnutChart"
+                                    aria-label="Grafik doughnut komposisi profesi"></canvas>
                             </div>
                         </div>
 
                         <!-- Visual Chart: Radar Profil Wilayah vs Rata-rata Provinsi -->
                         <div class="space-y-3 pt-3 border-t border-slate-900">
-                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Profil vs Rata-rata Provinsi</h3>
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Profil vs Rata-rata
+                                Provinsi</h3>
                             <div class="relative h-56 w-full">
-                                <canvas id="wilayahRadarChart" aria-label="Grafik radar perbandingan wilayah dengan rata-rata provinsi"></canvas>
+                                <canvas id="wilayahRadarChart"
+                                    aria-label="Grafik radar perbandingan wilayah dengan rata-rata provinsi"></canvas>
                             </div>
                             <div class="flex items-center justify-center gap-4 text-[10px]">
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-teal-500/60 border border-teal-400"></span> Wilayah Terpilih</span>
-                                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600/40 border border-slate-500"></span> Rata-rata Provinsi</span>
+                                <span class="flex items-center gap-1.5"><span
+                                        class="w-2.5 h-2.5 rounded-full bg-teal-500/60 border border-teal-400"></span>
+                                    Wilayah Terpilih</span>
+                                <span class="flex items-center gap-1.5"><span
+                                        class="w-2.5 h-2.5 rounded-full bg-slate-600/40 border border-slate-500"></span>
+                                    Rata-rata Provinsi</span>
                             </div>
                         </div>
                     </div>
@@ -258,19 +373,31 @@
             <!-- Insight Cards -->
             <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-2xl pointer-events-none">
+                    </div>
                     <div class="flex items-center gap-3 text-rose-400 border-b border-slate-900 pb-3">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 1: Kesenjangan & Alokasi Kritis</h3>
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 1: Kesenjangan &
+                            Alokasi Kritis</h3>
                     </div>
                     <p id="insightDisparitas" class="text-sm text-slate-400 mt-3.5 leading-relaxed">Menunggu data...</p>
                 </div>
 
                 <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none"></div>
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none">
+                    </div>
                     <div class="flex items-center gap-3 text-purple-400 border-b border-slate-900 pb-3">
-                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 2: Dominasi Kluster Profesi</h3>
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <h3 class="font-bold text-white text-sm uppercase tracking-wider">Insight 2: Dominasi Kluster
+                            Profesi</h3>
                     </div>
                     <p id="insightDominasi" class="text-sm text-slate-400 mt-3.5 leading-relaxed">Menunggu data...</p>
                 </div>
@@ -279,10 +406,12 @@
         </div>
     </main>
 
-    <footer class="text-center py-8 text-xs text-slate-600 border-t border-slate-800/60 mt-12 bg-slate-950/20" role="contentinfo">
+    <footer class="text-center py-8 text-xs text-slate-600 border-t border-slate-800/60 mt-12 bg-slate-950/20"
+        role="contentinfo">
         <p>© 2026 Dashboard Terbuka Provinsi Aceh · Portofolio Frontend Modern</p>
     </footer>
 
     <script src="app.js" defer></script>
 </body>
+
 </html>

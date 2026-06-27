@@ -122,6 +122,8 @@ function buildDOMRegistry() {
         insightDisparitas: document.getElementById('insightDisparitas'),
         insightDominasi:   document.getElementById('insightDominasi'),
         btnExportChart:  document.getElementById('btnExportChart'),
+        rasioLineChart:  document.getElementById('rasioLineChart'),
+        btnExportLineChart: document.getElementById('btnExportLineChart'),
         profileGranularPanel: document.getElementById('profileGranularPanel'),
     };
 }
@@ -209,18 +211,25 @@ const DataPipeline = {
 };
 
 // =============================================================================
-// CHART MANAGER — Bar Chart Utama
+// CHART MANAGER — Bar & Line Charts
 // =============================================================================
 const ChartManager = {
-    instance: null,
+    instanceBar: null,
+    instanceLine: null,
 
     render(records) {
+        this.renderBar(records);
+        this.renderLine(records);
+    },
+
+    renderBar(records) {
         const canvas = document.getElementById('rasioChart');
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
-        if (this.instance) {
-            this.instance.destroy();
-            this.instance = null;
+        if (this.instanceBar) {
+            this.instanceBar.destroy();
+            this.instanceBar = null;
         }
 
         const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
@@ -239,7 +248,7 @@ const ChartManager = {
 
         const isMobile = window.innerWidth < 640;
 
-        this.instance = new Chart(canvas, {
+        this.instanceBar = new Chart(canvas, {
             type: 'bar',
             data: {
                 labels,
@@ -286,11 +295,90 @@ const ChartManager = {
         });
     },
 
+    renderLine(records) {
+        const canvas = document.getElementById('rasioLineChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        if (this.instanceLine) {
+            this.instanceLine.destroy();
+            this.instanceLine = null;
+        }
+
+        const labels   = records.map(r => r.nama.replace('Kabupaten ', 'Kab. ').replace('Kota ', ''));
+        const dataRasio = records.map(r => r.rasio);
+
+        const gradLine = ctx.createLinearGradient(0, 0, 0, 350);
+        gradLine.addColorStop(0, 'rgba(20,184,166,0.3)');
+        gradLine.addColorStop(1, 'rgba(20,184,166,0)');
+
+        this.instanceLine = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Tren Rasio Nakes',
+                    data: dataRasio,
+                    backgroundColor: gradLine,
+                    borderColor: '#14b8a6',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#14b8a6',
+                    pointBorderColor: '#020617',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#ffffff',
+                    pointHoverBorderColor: '#14b8a6',
+                    pointHoverBorderWidth: 3,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: '#020617',
+                        titleFont: { size: 12, weight: 'bold', family: 'Plus Jakarta Sans' },
+                        bodyFont:  { size: 12, family: 'Plus Jakarta Sans' },
+                        borderColor: '#1e293b',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: ctx => ` Rasio: ${ctx.parsed.y} Nakes / Puskesmas`
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } } },
+                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } } }
+                },
+                onClick: (_event, activeElements) => {
+                    if (activeElements.length > 0) {
+                        DetailRenderer.render(activeElements[0].index);
+                    }
+                }
+            }
+        });
+    },
+
     exportPNG() {
-        if (!this.instance) return;
+        if (!this.instanceBar) return;
         const link = document.createElement('a');
         link.download = 'matriks-disparitas-nakes-aceh.png';
-        link.href = this.instance.toBase64Image();
+        link.href = this.instanceBar.toBase64Image();
+        link.click();
+    },
+
+    exportLinePNG() {
+        if (!this.instanceLine) return;
+        const link = document.createElement('a');
+        link.download = 'tren-rasio-nakes-aceh.png';
+        link.href = this.instanceLine.toBase64Image();
         link.click();
     }
 };
@@ -725,6 +813,7 @@ function bindEvents() {
     });
 
     DOM.btnExportChart.addEventListener('click', () => ChartManager.exportPNG());
+    DOM.btnExportLineChart.addEventListener('click', () => ChartManager.exportLinePNG());
 }
 
 // =============================================================================
