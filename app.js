@@ -28,6 +28,62 @@ const CONFIG = Object.freeze({
 });
 
 // =============================================================================
+// UTILITIES / ANIMATION HELPERS
+// =============================================================================
+function animateNumber(element, targetValue, isFloat = false, suffix = '', formatLocal = false) {
+    const duration = 650; // ms
+    const start = performance.now();
+    const currentValueText = element.textContent.replace(/[^\d.-]/g, '');
+    const startValue = parseFloat(currentValueText) || 0;
+    const diff = targetValue - startValue;
+
+    if (diff === 0) {
+        let finalValue;
+        if (isFloat) {
+            finalValue = targetValue.toFixed(2);
+        } else if (formatLocal) {
+            finalValue = targetValue.toLocaleString('id-ID');
+        } else {
+            finalValue = targetValue.toString();
+        }
+        element.textContent = `${finalValue}${suffix}`;
+        return;
+    }
+
+    function update(timestamp) {
+        const elapsed = timestamp - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = progress * (2 - progress); // easeOutQuad
+        const val = startValue + diff * ease;
+
+        let displayValue;
+        if (isFloat) {
+            displayValue = val.toFixed(2);
+        } else if (formatLocal) {
+            displayValue = Math.round(val).toLocaleString('id-ID');
+        } else {
+            displayValue = Math.round(val).toString();
+        }
+        element.textContent = `${displayValue}${suffix}`;
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            let finalValue;
+            if (isFloat) {
+                finalValue = targetValue.toFixed(2);
+            } else if (formatLocal) {
+                finalValue = targetValue.toLocaleString('id-ID');
+            } else {
+                finalValue = targetValue.toString();
+            }
+            element.textContent = `${finalValue}${suffix}`;
+        }
+    }
+    requestAnimationFrame(update);
+}
+
+// =============================================================================
 // STATE
 // =============================================================================
 const State = {
@@ -66,6 +122,7 @@ function buildDOMRegistry() {
         insightDisparitas: document.getElementById('insightDisparitas'),
         insightDominasi:   document.getElementById('insightDominasi'),
         btnExportChart:  document.getElementById('btnExportChart'),
+        profileGranularPanel: document.getElementById('profileGranularPanel'),
     };
 }
 
@@ -247,17 +304,19 @@ const ProfesiDoughnutManager = {
     render(record) {
         const canvas = DOM.profesiDoughnutChart;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-
-        if (this.instance) {
-            this.instance.destroy();
-            this.instance = null;
-        }
 
         const data = CONFIG.PROFESI.map(p => record[p.key]);
+        const labels = CONFIG.PROFESI.map(p => p.label);
+
+        if (this.instance) {
+            this.instance.data.datasets[0].data = data;
+            this.instance.update();
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
         const colors = CONFIG.PROFESI.map(p => p.chart);
         const borders = CONFIG.PROFESI.map(p => p.border);
-        const labels = CONFIG.PROFESI.map(p => p.label);
 
         this.instance = new Chart(canvas, {
             type: 'doughnut',
@@ -319,16 +378,12 @@ const ProfesiDoughnutManager = {
 // =============================================================================
 const WilayahRadarManager = {
     instance: null,
+    currentRecord: null,
+    currentAvg: null,
 
     render(record, allRecords) {
         const canvas = DOM.wilayahRadarChart;
         if (!canvas || !allRecords || allRecords.length === 0) return;
-        const ctx = canvas.getContext('2d');
-
-        if (this.instance) {
-            this.instance.destroy();
-            this.instance = null;
-        }
 
         const keys = CONFIG.PROFESI.map(p => p.key);
         const labels = CONFIG.PROFESI.map(p => p.label);
@@ -348,6 +403,16 @@ const WilayahRadarManager = {
 
         const dataWilayah = keys.map(key => normalize(record[key], avg[key]));
         const dataAvg = [50, 50, 50, 50, 50];
+
+        this.currentRecord = record;
+        this.currentAvg = avg;
+
+        if (this.instance) {
+            this.instance.data.datasets[0].label = record.nama;
+            this.instance.data.datasets[0].data = dataWilayah;
+            this.instance.update();
+            return;
+        }
 
         this.instance = new Chart(canvas, {
             type: 'radar',
@@ -402,9 +467,9 @@ const WilayahRadarManager = {
                                 const idx = ctx.dataIndex;
                                 const key = keys[idx];
                                 if (label === 'Rata-rata Provinsi') {
-                                    return ` Rata-rata: ${avg[key].toFixed(1)}`;
+                                    return ` Rata-rata: ${WilayahRadarManager.currentAvg[key].toFixed(1)}`;
                                 }
-                                return ` ${label}: ${record[key].toLocaleString('id-ID')}`;
+                                return ` ${label}: ${WilayahRadarManager.currentRecord[key].toLocaleString('id-ID')}`;
                             }
                         }
                     }
@@ -470,6 +535,23 @@ const DetailRenderer = {
         return { label: 'Sedang', cls: 'text-amber-400 bg-amber-500/10 border-amber-500/30' };
     },
 
+    init() {
+        DOM.profesiBreakdown.innerHTML = CONFIG.PROFESI.map(p => {
+            return `
+                <div id="profesi-item-${p.key}">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-400 font-medium">${p.label}</span>
+                        <span class="font-bold text-white breakdown-count">0 Org</span>
+                    </div>
+                    <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
+                        <div class="${p.color} h-full transition-all duration-500 ease-out breakdown-bar"
+                             style="width: 0%; box-shadow: 0 0 8px ${p.glow}"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+
     render(index) {
         State.activeIndex = index;
         const record = State.records[index];
@@ -477,32 +559,35 @@ const DetailRenderer = {
 
         DOM.wilayahSelect.value = index;
 
-        DOM.detailPuskesmas.textContent  = `${record.puskesmas} Unit`;
-        DOM.detailTotalNakes.textContent = `${record.total.toLocaleString('id-ID')} Jiwa`;
-        DOM.detailRasio.textContent      = record.rasio;
+        // Animate indicators
+        animateNumber(DOM.detailPuskesmas, record.puskesmas, false, ' Unit', false);
+        animateNumber(DOM.detailTotalNakes, record.total, false, ' Jiwa', true);
+        animateNumber(DOM.detailRasio, record.rasio, true, '', false);
 
         const status = this.getStatus(record.rasio);
         DOM.detailStatusBadge.textContent  = status.label;
         DOM.detailStatusBadge.className    = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${status.cls}`;
 
-        // 5 PROFESI TERPISAH sesuai CSV: perawat, bidan, kesmas, kesling, gizi
+        // Trigger container pulse highlight animation
+        if (DOM.profileGranularPanel) {
+            DOM.profileGranularPanel.classList.remove('profile-card-animate');
+            void DOM.profileGranularPanel.offsetWidth; // Force reflow
+            DOM.profileGranularPanel.classList.add('profile-card-animate');
+        }
+
+        // 5 PROFESI TERPISAH sesuai CSV
         const total = record.total || 1;
-        DOM.profesiBreakdown.innerHTML = CONFIG.PROFESI.map(p => {
+        CONFIG.PROFESI.forEach(p => {
             const count = record[p.key];
             const pct   = ((count / total) * 100).toFixed(1);
-            return `
-                <div>
-                    <div class="flex justify-between text-xs mb-1">
-                        <span class="text-slate-400 font-medium">${p.label}</span>
-                        <span class="font-bold text-white">${count.toLocaleString('id-ID')} Org</span>
-                    </div>
-                    <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800">
-                        <div class="${p.color} h-full transition-all duration-500 ease-out"
-                             style="width: ${pct}%; box-shadow: 0 0 8px ${p.glow}"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+            const container = document.getElementById(`profesi-item-${p.key}`);
+            if (container) {
+                const countElem = container.querySelector('.breakdown-count');
+                const barElem   = container.querySelector('.breakdown-bar');
+                animateNumber(countElem, count, false, ' Org', true);
+                barElem.style.width = `${pct}%`;
+            }
+        });
 
         // Render visual charts
         ProfesiDoughnutManager.render(record);
@@ -582,6 +667,7 @@ const Dashboard = {
     boot() {
         const { records } = State;
 
+        DetailRenderer.init();
         KPIRenderer.render(records);
         DropdownManager.populate(records);
         ChartManager.render(records);
