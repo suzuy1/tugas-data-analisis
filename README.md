@@ -31,11 +31,37 @@ Projek ini dibangun secara terpisah agar kode rapi, modular, dan mudah dikembang
 
 ```
 tugas-analisis-data/
-├── index.html       # Kerangka UI (Struktur layout, Tailwind CSS, & CDN libraries)
-├── style.css        # Lembar Gaya (Kustomisasi scrollbar & keyframes animasi interaksi)
-├── app.js           # Logika Utama (State, pipeline CSV, visualisasi Chart.js, & efek animasi)
-└── README.md        # Dokumentasi Detail Projek
+├── index.html                                          # Kerangka UI (Struktur layout, Tailwind CSS, & CDN libraries)
+├── style.css                                           # Lembar Gaya (Kustomisasi scrollbar & keyframes animasi interaksi)
+├── app.js                                              # Logika Utama (State, pipeline CSV, visualisasi Chart.js, & efek animasi)
+├── syntax.sql                                          # Query SQL untuk menghitung rasio nakes per puskesmas dari dataset mentah
+├── jumlah-puskesmas-menurut-kabupaten_kota.csv         # Dataset jumlah Puskesmas per Kabupaten/Kota
+├── jumlah-tenaga-perawat-bidan-di-puskesmas.csv        # Dataset jumlah Perawat & Bidan di Puskesmas
+├── jumlah-tenaga-kesehatan-masyarakat-di-puskesmas.csv # Dataset jumlah Kesmas, Kesling, & Gizi di Puskesmas
+└── README.md                                           # Dokumentasi Detail Projek
 ```
+
+---
+
+## 🔗 Sumber Dataset
+
+Seluruh data yang digunakan dalam projek ini bersumber dari **Open Data Provinsi Aceh** (Satu Data Kesehatan Indonesia):
+
+| Dataset | Sumber |
+| :--- | :--- |
+| Jumlah Puskesmas menurut Kabupaten/Kota | [data.acehprov.go.id](https://data.acehprov.go.id/id/dataset/jumlah-puskesmas-menurut-kabupaten-kota) |
+| Jumlah Tenaga Perawat & Bidan di Puskesmas | [data.acehprov.go.id](https://data.acehprov.go.id/id/dataset/jumlah-tenaga-perawat-bidan-di-puskesmas) |
+| Jumlah Tenaga Kesehatan Masyarakat di Puskesmas | [data.acehprov.go.id](https://data.acehprov.go.id/id/dataset/jumlah-tenaga-kesehatan-masyarakat-di-puskesmas) |
+
+---
+
+## ⚠️ Catatan Penting tentang Data
+
+> **Jebakan Hitung Ganda (Double Counting):** Di dalam data tenaga kesehatan, instansi dinas menyediakan baris `laki-laki`, `perempuan`, dan baris total `laki-laki + perempuan`. Jika langsung menggunakan perintah `SUM()`, angkanya akan menjadi 2 kali lipat lebih banyak dari aslinya. Query SQL (`syntax.sql`) sudah menangani filter ini secara cerdas.
+
+> **Keunikan Data Bidan:** Khusus untuk profesi Bidan, kolom `jenis_kelamin` di file aslinya dikosongkan (`NULL`) karena bidan sudah pasti perempuan.
+
+> **Typo Kolom Kunci:** File Puskesmas menggunakan nama kolom `kemendagri_kode_kabupaten_kota` (pakai garis bawah `_`), sedangkan dua file nakes lainnya menggunakan nama `kemendagri_kode_kabupatenkota` (tanpa garis bawah). Perbedaan ini sudah ditangani di dalam query SQL.
 
 ---
 
@@ -63,6 +89,7 @@ Agar data dapat terbaca oleh pipeline otomatis di `app.js`, berkas `.csv` yang d
 * **JavaScript (Vanilla ES6)**: Pengendali state, interaktivitas, dan manipulasi DOM secara efisien.
 * **Chart.js**: Mesin rendering grafik responsif dengan animasi morfing dataset.
 * **PapaParse**: Pustaka parsing CSV yang andal di browser.
+* **SQL (PostgreSQL)**: Query analisis data mentah untuk menghitung rasio nakes per puskesmas.
 
 ---
 
@@ -73,5 +100,5 @@ Agar data dapat terbaca oleh pipeline otomatis di `app.js`, berkas `.csv` yang d
    git clone https://github.com/suzuy1/tugas-data-analisis.git
    ```
 2. Navigasikan ke dalam folder projek dan buka berkas `index.html` langsung menggunakan penjelajah web (browser) Anda. (Sangat direkomendasikan menggunakan ekstensi **Live Server** di VS Code).
-3. Siapkan berkas `.csv` yang sesuai format, kemudian **tarik & lepas (drag-and-drop)** atau klik zona upload untuk mengimpor berkas.
+3. Siapkan berkas `.csv` yang sesuai format, kemudian **tarik & lepas (drag-and-drop)** atau klik zona upload untuk mengimpor berkas. Atau klik tombol **"Gunakan contoh data demo Provinsi Aceh"** untuk langsung melihat dashboard tanpa perlu mengunggah file.
 4. Nikmati dashboard interaktif dengan seluruh visualisasi dan animasinya.
