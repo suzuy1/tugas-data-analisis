@@ -24,7 +24,31 @@ const CONFIG = Object.freeze({
         { key: 'kesmas',  label: 'Kesmas',                 color: 'bg-amber-500',   glow: 'rgba(245,158,11,0.5)',   chart: 'rgba(245,158,11,0.85)',  border: 'rgba(245,158,11,1)'  },
         { key: 'kesling', label: 'Kesling',                color: 'bg-emerald-500', glow: 'rgba(16,185,129,0.5)',   chart: 'rgba(16,185,129,0.85)',  border: 'rgba(16,185,129,1)'  },
         { key: 'gizi',    label: 'Gizi',                   color: 'bg-rose-500',    glow: 'rgba(244,63,94,0.5)',    chart: 'rgba(244,63,94,0.85)',   border: 'rgba(244,63,94,1)'   },
-    ]
+    ],
+    DEMO_DATA: `kabupaten_kota,jumlah_puskesmas_2024,total_seluruh_nakes,rasio_nakes_per_puskesmas,jumlah_perawat,jumlah_bidan,jumlah_kesmas,jumlah_kesling,jumlah_gizi
+Kabupaten Aceh Selatan,27,443,16.41,178,217,23,9,16
+Kabupaten Aceh Tenggara,19,397,20.89,192,176,17,0,12
+Kabupaten Gayo Lues,12,310,25.83,79,172,29,16,14
+Kota Banda Aceh,11,318,28.91,75,182,31,16,14
+Kabupaten Simeulue,15,511,34.07,168,238,75,12,18
+Kota Subulussalam,8,331,41.38,81,215,19,8,8
+Kabupaten Aceh Singkil,12,546,45.50,211,274,36,6,19
+Kabupaten Aceh Besar,29,1357,46.79,320,671,205,80,81
+Kabupaten Aceh Barat Daya,13,637,49.00,176,342,61,27,31
+Kabupaten Aceh Tengah,17,837,49.24,168,514,103,29,23
+Kabupaten Aceh Jaya,12,609,50.75,191,295,73,26,24
+Kabupaten Nagan Raya,15,786,52.40,209,475,65,17,20
+Kabupaten Aceh Utara,32,1829,57.16,528,1079,151,42,29
+Kabupaten Aceh Timur,27,1570,58.15,427,945,122,12,64
+Kota Sabang,6,360,60.00,218,97,22,10,13
+Kabupaten Aceh Barat,13,839,64.54,226,431,104,18,60
+Kabupaten Aceh Tamiang,15,1029,68.60,397,535,57,14,26
+Kabupaten Pidie,26,2035,78.27,437,1366,184,22,26
+Kota Lhokseumawe,7,564,80.57,212,248,74,10,20
+Kabupaten Bener Meriah,13,1073,82.54,269,677,86,22,19
+Kota Langsa,5,437,87.40,156,211,53,8,9
+Kabupaten Pidie Jaya,12,1153,96.08,358,602,88,86,19
+Kabupaten Bireuen,13,2631,202.38,709,1677,147,47,51`
 });
 
 // =============================================================================
@@ -125,6 +149,8 @@ function buildDOMRegistry() {
         rasioLineChart:  document.getElementById('rasioLineChart'),
         btnExportLineChart: document.getElementById('btnExportLineChart'),
         profileGranularPanel: document.getElementById('profileGranularPanel'),
+        demoDataContainer: document.getElementById('demoDataContainer'),
+        btnLoadDemo:      document.getElementById('btnLoadDemo'),
     };
 }
 
@@ -153,11 +179,20 @@ const DataPipeline = {
     },
 
     mapRow(row) {
+        const puskesmas = parseInt(row['jumlah_puskesmas_2024']) || 0;
+        const total     = parseInt(row['total_seluruh_nakes'])   || 0;
+        let rasio       = parseFloat(row['rasio_nakes_per_puskesmas']);
+        
+        // Pengaman validasi rasio: jika NaN atau 0, hitung ulang secara otomatis
+        if (isNaN(rasio) || rasio === 0) {
+            rasio = puskesmas > 0 ? parseFloat((total / puskesmas).toFixed(2)) : 0;
+        }
+
         return {
-            nama:      row['kabupaten_kota'],
-            puskesmas: parseInt(row['jumlah_puskesmas_2024']) || 0,
-            total:     parseInt(row['total_seluruh_nakes'])   || 0,
-            rasio:     parseFloat(row['rasio_nakes_per_puskesmas']) || 0,
+            nama:      row['kabupaten_kota'] || 'Wilayah Tidak Diketahui',
+            puskesmas,
+            total,
+            rasio,
             perawat:   parseInt(row['jumlah_perawat']) || 0,
             bidan:     parseInt(row['jumlah_bidan'])   || 0,
             kesmas:    parseInt(row['jumlah_kesmas'])  || 0,
@@ -774,6 +809,10 @@ const Dashboard = {
         DetailRenderer.render(0);
         InsightEngine.generate(records);
 
+        if (DOM.demoDataContainer) {
+            DOM.demoDataContainer.classList.add('hidden');
+        }
+
         DOM.dashboardContent.classList.remove('hidden');
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -826,6 +865,43 @@ function bindEvents() {
 
     DOM.btnExportChart.addEventListener('click', () => ChartManager.exportPNG());
     DOM.btnExportLineChart.addEventListener('click', () => ChartManager.exportLinePNG());
+
+    if (DOM.btnLoadDemo) {
+        DOM.btnLoadDemo.addEventListener('click', () => {
+            DOM.uploadPrompt.classList.add('hidden');
+            DOM.uploadLoading.classList.remove('hidden');
+            
+            setTimeout(() => {
+                Papa.parse(CONFIG.DEMO_DATA, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        const valid = DataPipeline.validateHeaders(results.meta.fields);
+                        if (!valid) {
+                            ErrorHandler.show('Header file demo tidak valid.');
+                            return;
+                        }
+                        State.records = results.data
+                            .map(row => DataPipeline.mapRow(row))
+                            .sort((a, b) => a.rasio - b.rasio);
+
+                        try {
+                            localStorage.setItem('dashboard_records', JSON.stringify(State.records));
+                        } catch (e) {
+                            console.error('Gagal menyimpan ke localStorage:', e);
+                        }
+
+                        DOM.uploadLoading.classList.add('hidden');
+                        DOM.uploadPrompt.classList.remove('hidden');
+                        Dashboard.boot();
+                    },
+                    error: (err) => {
+                        ErrorHandler.show('Gagal memproses data demo: ' + err.message);
+                    }
+                });
+            }, 600);
+        });
+    }
 }
 
 // =============================================================================
